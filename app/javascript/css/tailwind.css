@@ -30,7 +30,7 @@
   background-size: 40em;
 }
 
-[data-react-class], html, body, #container { height: 100%; }
+[data-react-class], html, body, #container { height: 100%!important; }
 
 .btn {
   @apply font-bold py-2 px-4 rounded text-center cursor-pointer;
@@ -45,6 +45,13 @@
 
 a {
   @apply text-primary no-underline;
+}
+
+ul {
+  text-align: left;
+}
+li {
+  list-style: none;
 }
 
 label {

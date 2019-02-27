@@ -19,13 +19,12 @@ class Home extends React.Component {
   render () {
     return (
       <React.Fragment>
-        { isLogged ? <Feed /> : <Login /> } 
+        Home
       </React.Fragment>
     );
   }
 }
 
 Home.propTypes = {
-  isLogged: PropTypes.string
 };
 export default Home

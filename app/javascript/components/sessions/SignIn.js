@@ -30,7 +30,7 @@ class SignIn extends React.Component {
                 <input type="password" name="password" className="input" placeholder="Password" />
               </div>
 
-              <a className="btn primary py-3">LOGIN</a> 
+              <button type="submit" className="btn primary py-4 mt-2 w-full">LOGIN</button>
 
               <div className="text-dark-light pt-4">
                 Create a account <a href="/users/sign_up">here</a>!
@@ -44,3 +44,4 @@ class SignIn extends React.Component {
 }
 
 export default SignIn
+
