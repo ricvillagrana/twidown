@@ -11,20 +11,19 @@ class Home extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = {
-      isLogged: false
-    }
+   
   }
 
   render () {
     return (
       <React.Fragment>
-        Home
+        <a className="btn primary" data-method="delete" href="/users/sign_out">
+          Cerrar sesión
+        </a>
       </React.Fragment>
     );
   }
 }
 
-Home.propTypes = {
-};
+Home.propTypes = {}
 export default Home

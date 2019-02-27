@@ -64,7 +64,6 @@ class SignUp extends React.Component {
       }
     }
 
-    this.signUp                             = this.signUp.bind(this)
     this.showErrors                         = this.showErrors.bind(this)
     this.handleSubmit                       = this.handleSubmit.bind(this)
     this.handleUsernameChange               = this.handleUsernameChange.bind(this)
@@ -72,14 +71,6 @@ class SignUp extends React.Component {
     this.handlePasswordChange               = this.handlePasswordChange.bind(this)
     this.handlePasswordConfirmationChange   = this.handlePasswordConfirmationChange.bind(this)
     this.handleEmailChange                  = this.handleEmailChange.bind(this)
-  }
-
-  signUp() {
-    $axios.post('/users/register', credentials)
-      .bind(this)
-      .then(response => {
-        // handle response
-      })
   }
 
   handleUsernameChange(username) {
@@ -129,9 +120,8 @@ class SignUp extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault()
-    $axios.post('/users/register', {user: this.state.user})
+    $axios.post('/users/register', { user: this.state.user })
       .then(({data}) => {
-        console.log(data)
         if (data.status === 200) {
           window.location = '/'
         } else {
@@ -147,7 +137,7 @@ class SignUp extends React.Component {
     const errorsHTML = errors.map(err => `<li>${err}</li>`).join('')
     console.log(errorsHTML)
     $swal.fire({
-      type: 'warning',
+      type: 'info',
       title: 'Some errors were found',
       html: `Please check the following advices: <ul>${errorsHTML}</ul>`
     })
