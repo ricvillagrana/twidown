@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128px" height="66px" viewBox="0 0 128 66" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.6 (67491) - http://www.bohemiancoding.com/sketch -->
+    <title>Twitter Copy Project</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <text id="Twidown" font-family="Ubuntu-Bold, Ubuntu" font-size="31" font-weight="bold" letter-spacing="-0.258333445" fill="#587AFD">
+            <tspan x="0" y="60">Twidown</tspan>
+        </text>
+        <path d="M42.0846061,1 L85.9153939,1 C86.6198005,3.2072047 87,5.55920217 87,8 L77,8 C72.581722,8 69,11.581722 69,16 L69,30.4549907 C67.3902793,30.8118318 65.7171142,31 64,31 C62.2828858,31 60.6097207,30.8118318 59,30.4549907 L59,16 C59,11.581722 55.418278,8 51,8 L41,8 C41,5.55920217 41.3801995,3.2072047 42.0846061,1 Z" id="Combined-Shape" stroke="#587AFD" fill="#7A94FD"></path>
+    </g>
+</svg>

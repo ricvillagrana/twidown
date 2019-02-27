@@ -18,6 +18,54 @@
  *
  * @import "tailwindcss/components";
  */
+@import url('https://fonts.googleapis.com/css?family=Ubuntu|Ubuntu+Condensed|Ubuntu+Mono');
+
+* {
+  @apply text-dark-light;
+  font-family: Ubuntu;
+}
+
+.bg-image {
+  background: url('../../assets/images/bg.svg') no-repeat; 
+  background-size: 40em;
+}
+
+[data-react-class], html, body, #container { height: 100%; }
+
+.btn {
+  @apply font-bold py-2 px-4 rounded text-center cursor-pointer;
+}
+.btn.primary {
+  @apply bg-primary text-white;
+}
+.btn.primary:hover {
+  @apply bg-primary-light;
+}
+
+
+a {
+  @apply text-primary no-underline;
+}
+
+label {
+  @apply block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2;
+}
+
+.input {
+  @apply appearance-none block w-full bg-grey-lightest text-dark border border-dark-lighter rounded py-3 px-4 mb-3 leading-tight;
+}
+.input:focus {
+  @apply outline-none bg-white border-primary-light;
+}
+
+.card {
+  @apply max-w-sm rounded overflow-hidden shadow-md bg-white;
+}
+
+.title {
+  @apply font-bold py-2 text-lg;
+}
+
 @tailwind components;
 
 /**
