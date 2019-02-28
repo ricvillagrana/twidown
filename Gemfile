@@ -74,3 +74,7 @@ gem 'devise'
 # Figaro
 gem 'figaro'
 
+# FontAwesome
+gem 'font-awesome-rails'
+
+
