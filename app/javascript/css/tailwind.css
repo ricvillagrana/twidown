@@ -33,8 +33,15 @@
 
 html, body, #container { height: 100%!important; }
 
+#container { @apply bg-primary-lightest; }
+
 [data-react-class='sessions/SignUp'] { height: 100%; } 
 [data-react-class='sessions/SignIn'] { height: 100%; } 
+
+.profile-pic-size {
+  height: 90px;
+  width: 90px;
+}
 
 .btn {
   @apply cursor-pointer font-bold py-2 px-4 rounded text-center;

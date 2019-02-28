@@ -2,12 +2,22 @@ import React from "react"
 import PropTypes from "prop-types"
 
 import TopBar from './TopBar'
+import InfoCard from './InfoCard'
 
 const Feed = props => (
-  <div className="flex flex-col h-full bg-grey-lighter">
+  <div className="flex flex-col h-full">
     <TopBar
       user={props.user}
       menuList={props.menu} />  
+    <div className="flex flex-row justify-arround w-full mt-6">
+      <div className="flex flex-col w-1/6"></div>
+      <div className="flex flex-col w-1/6 px-2">
+        <InfoCard user={props.user} />
+      </div>
+      <div className="flex flex-col w-1/3 px-2">Feed</div>
+      <div className="flex flex-col w-1/6 px-2">Ads</div>
+      <div className="flex flex-col w-1/6"></div>
+    </div>
   </div>
 )
 
