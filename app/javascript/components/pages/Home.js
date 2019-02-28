@@ -3,8 +3,9 @@ import PropTypes from "prop-types"
 
 import TopBar from './TopBar'
 import InfoCard from './InfoCard'
+import NewPost from './NewPost'
 
-const Feed = props => (
+const HomeView= props => (
   <div className="flex flex-col h-full">
     <TopBar
       user={props.user}
@@ -14,7 +15,9 @@ const Feed = props => (
       <div className="flex flex-col w-1/6 px-2">
         <InfoCard user={props.user} />
       </div>
-      <div className="flex flex-col w-1/3 px-2">Feed</div>
+      <div className="flex flex-col w-1/3 px-2">
+        <NewPost />
+      </div>
       <div className="flex flex-col w-1/6 px-2">Ads</div>
       <div className="flex flex-col w-1/6"></div>
     </div>
@@ -61,7 +64,7 @@ class Home extends React.Component {
   render () {
     return (
       <React.Fragment>
-        <Feed 
+        <HomeView
           user={this.state.user}
           menu={this.state.menu} />
       </React.Fragment>
