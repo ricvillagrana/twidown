@@ -30,10 +30,14 @@
   background-size: 40em;
 }
 
-[data-react-class], html, body, #container { height: 100%!important; }
+
+html, body, #container { height: 100%!important; }
+
+[data-react-class='sessions/SignUp'] { height: 100%; } 
+[data-react-class='sessions/SignIn'] { height: 100%; } 
 
 .btn {
-  @apply font-bold py-2 px-4 rounded text-center cursor-pointer;
+  @apply cursor-pointer font-bold py-2 px-4 rounded text-center;
 }
 .btn.primary {
   @apply bg-primary text-white;
@@ -44,7 +48,7 @@
 
 
 a {
-  @apply text-primary no-underline;
+  @apply text-primary no-underline cursor-pointer;
 }
 
 ul {
@@ -66,7 +70,7 @@ label {
 }
 
 .card {
-  @apply max-w-sm rounded overflow-hidden shadow-md bg-white;
+  @apply rounded overflow-hidden shadow-md bg-white;
 }
 
 .title {

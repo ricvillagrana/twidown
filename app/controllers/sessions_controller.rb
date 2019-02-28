@@ -1,4 +1,8 @@
 class SessionsController < ApplicationController
+
+  def show
+    render json: { user: current_user } if user_signed_in?
+  end
   
   def login
     @user = User.find_by_username(login_params[:username])
