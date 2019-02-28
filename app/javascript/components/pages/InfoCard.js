@@ -1,9 +1,6 @@
 import React from "react"
 import PropTypes from "prop-types"
 
-import profileImage from '../../../assets/images/profile.png'
-import coverImage from '../../../assets/images/cover.png'
-
 class InfoCard extends React.Component {
   constructor(props) {
     super(props)
@@ -14,9 +11,9 @@ class InfoCard extends React.Component {
     return (
       <React.Fragment>
         {props.user && <div className="overflow-hidden rounded bg-white max-w-xs">
-          <img src={ props.user.cover_image ? props.user.cover_image : coverImage } className="w-full" />
+          <img src={ props.user.cover_image } className="w-full" />
           <div className="flex justify-center -mt-8">
-            <img src={ props.user.profile_image ? props.user.profile_image : profileImage } className="profile-pic-size rounded-full border-solid border-white border-2 -mt-3" />
+            <img src={ props.user.profile_image } className="profile-pic-size rounded-full border-solid border-white border-2 -mt-3" />
           </div>
           <div className="text-center px-3 pb-6 pt-2">
             <h3 className="text-2xl">{props.user.name}</h3>

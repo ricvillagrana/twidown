@@ -27,7 +27,7 @@ class NewPost extends React.Component {
     const buttonDisabled = this.state.postText.length <= 0
     return (
       <React.Fragment>
-        <div className="bg-white rounded p-3 flex flex-col">
+        <div className="bg-white rounded-t p-3 flex flex-col">
           <textarea
             id="textarea-post"
             onChange={e => this.handlePostTextChange(e.target.value)}
