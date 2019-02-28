@@ -41,9 +41,9 @@ class Home extends React.Component {
 
     this.state = {
       menu: [
-        { label: 'Home', link: '/' },
-        { label: 'People', link: '/' },
-        { label: 'Options', link: '/' }
+        { label: 'Home', icon: 'fa fa-home', link: '/' },
+        { label: 'People', icon: 'fa fa-users', link: '/' },
+        { label: 'Options', icon: 'fa fa-cogs', link: '/' }
       ],
       user: null
     }

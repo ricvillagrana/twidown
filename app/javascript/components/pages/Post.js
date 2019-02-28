@@ -19,9 +19,9 @@ const UserInfo = props => (
 const PostControls = props => (
   <React.Fragment>
     <div className="flex flex-row justify-around mt-3">
-      <a>Comment</a>
-      <a>Repost</a>
-      <a>Like</a>
+      <a><i className="fa fa-comment"></i>Comment</a>
+      <a><i className="fa fa-share"></i>Repost</a>
+      <a><i className="fa fa-heart"></i>Like</a>
     </div>
   </React.Fragment>
 )
@@ -38,7 +38,9 @@ class Post extends React.Component {
       <React.Fragment>
         <div className="bg-white p-5 border-t border-solid border-primary-lightest flex flex-col">
           <UserInfo user={props.user} />
-          {renderHTML(props.content)}
+          <div className="ml-16">
+            {renderHTML(props.content)}
+          </div>
           <PostControls />
         </div>
       </React.Fragment>

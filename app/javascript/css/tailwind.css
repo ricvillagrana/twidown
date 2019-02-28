@@ -107,6 +107,14 @@ label {
   @apply font-bold py-2 text-lg;
 }
 
+.fa {
+  @apply mr-1;
+  color: inherit;
+}
+.fa-normal {
+  margin: none;
+}
+
 @tailwind components;
 
 /**
