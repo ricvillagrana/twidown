@@ -1,7 +1,7 @@
 import React from "react"
 import PropTypes from "prop-types"
 
-import logo from '../../../assets/images/logo_h.svg'
+import logo from '../../../../assets/images/logo_h.svg'
 
 const Menu = props => (
   <div className="flex flex-col items-end mr-8">

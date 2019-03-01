@@ -6,8 +6,8 @@ import InfoCard from './InfoCard'
 import NewPost from './NewPost'
 import Post from './Post'
 
-import profileImage from '../../../assets/images/profile.png'
-import coverImage from '../../../assets/images/cover.png'
+import profileImage from '../../../../assets/images/profile.png'
+import coverImage from '../../../../assets/images/cover.png'
 
 const HomeView= props => (
   <div className="flex flex-col mb-4">
@@ -21,8 +21,10 @@ const HomeView= props => (
       </div>
       <div className="flex flex-col w-1/3 px-2">
         <NewPost />
-        <Post user={props.user} content={"Any other text <div class='markdown-parser'><h1>Title</h1><p>this is a text that has a <strong>bold</strong> text and <em>italics</em></p><p>Know more here <a href='img_url'><img src='https://pbs.twimg.com/media/D0dmgnVWoAEv5C2.jpg' alt='alt' /></a></p></div>"} />
-        <Post user={props.user} content={"Any other text <div class='markdown-parser'><h1>Title</h1><p>this is a text that has a <strong>bold</strong> text and <em>italics</em></p><p>Know more here <a href='img_url'><img src='https://pbs.twimg.com/media/D0dmgnVWoAEv5C2.jpg' alt='alt' /></a></p></div>"} />
+
+        {props.posts.map(post => (
+          <Post key={post.id} user={post.user} content={post.content} date={post.created_at} />
+        ))}
 
         <div className="bg-white p-5 rounded-b border-t border-solid border-primary-lightest flex justify-center">
           <a href="#up">Go up</a>
@@ -45,14 +47,17 @@ class Home extends React.Component {
         { label: 'People', icon: 'fa fa-users', link: '/' },
         { label: 'Options', icon: 'fa fa-cogs', link: '/' }
       ],
+      posts: [],
       user: null
     }
 
     this.fetchUser = this.fetchUser.bind(this)
+    this.fetchPosts = this.fetchPosts.bind(this)
   }
 
   componentDidMount() {
     this.fetchUser()
+    this.fetchPosts()
   }
 
   fetchUser() {
@@ -75,11 +80,35 @@ class Home extends React.Component {
       })
   }
 
+  fetchPosts() {
+    $axios.get('/posts.json')
+      .then(({data}) => {
+        this.setState({
+          posts: data.posts
+        })
+      })
+      .catch(err => {
+        this.showErrors([err])
+      })
+  }
+
+  showErrors(errors) {
+    const errorsHTML = errors.map(err => `<li>${err}</li>`).join('')
+    $swal.fire({
+      type: 'error',
+      title: 'Error',
+      html: `<ul>${errorsHTML}</ul>`
+    })
+  }
+
+
+
   render () {
     return (
       <React.Fragment>
         <HomeView
           user={this.state.user}
+          posts={this.state.posts}
           menu={this.state.menu} />
       </React.Fragment>
     )
