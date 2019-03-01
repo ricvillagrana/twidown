@@ -8,4 +8,42 @@ class PostsController < ApplicationController
     end
   end
 
+  def create
+    @post = current_user.posts.new(post_params)
+
+    if @post.save
+      render json: { status: 200, post: @post }
+    else
+      render json: { status: 500, errors: @post.errors.full_messages }
+    end
+  end
+
+  def update
+    if post.update!(post_params)
+      render json: { status: 200, post: @post }
+    else
+      render json: { status: 500, errors: @post.errors.full_messages }
+    end
+  end
+
+  def destroy
+    if post.destroy
+      render json: { status: 200 }
+    else
+      render json: { status: 500, errors: @post.errors.full_messages }
+    end
+  end
+
+  private
+
+  def post
+    Post.find(params[:id])
+  end
+
+  def post_params
+    params
+      .require(:post)
+      .permit(:content, :parent_id)
+  end
+
 end
