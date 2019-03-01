@@ -2,14 +2,16 @@ import React from "react"
 import PropTypes from "prop-types"
 import renderHTML from 'react-render-html'
 
+import profileImage from '../../../../assets/images/profile.png'
+
 const UserInfo = props => (
   <React.Fragment>
     {props.user && <div>
-      <div className="flex items-center mb-2">
-        <img src={props.user.profile_image} className="h-12 w-12 rounded-full" />
-    	<div className="flex flex-col ml-4">
+      <div className="flex mb-2 -mb-5">
+        <img src={ props.user.profile_image || profileImage } className="h-12 w-12 rounded-full" />
+    	<div className="flex flex-row ml-4">
           <a className="font-bold text-black" href={`/users/${props.user.username}`}>{props.user.name}</a>
-          <span className="text-grey">@{props.user.username}</span>
+          <a className="text-grey ml-1" href={`/users/${props.user.username}`}>@{props.user.username}</a>
       	</div>
       </div> 
     </div>}

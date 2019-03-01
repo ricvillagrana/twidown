@@ -20,7 +20,7 @@ const HomeView= props => (
         <InfoCard user={props.user} />
       </div>
       <div className="flex flex-col w-1/3 px-2">
-        <NewPost />
+        <NewPost handleUpdateFeed={props.handleUpdateFeed} />
 
         {props.posts.map(post => (
           <Post key={post.id} user={post.user} content={post.content} date={post.created_at} />
@@ -109,7 +109,8 @@ class Home extends React.Component {
         <HomeView
           user={this.state.user}
           posts={this.state.posts}
-          menu={this.state.menu} />
+          menu={this.state.menu}
+          handleUpdateFeed={this.fetchUser} />
       </React.Fragment>
     )
   }
