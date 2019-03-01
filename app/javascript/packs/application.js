@@ -1,5 +1,6 @@
 import axios from 'axios';
 import swal from 'sweetalert2';
+import autosize from 'autosize'
 
 
 // Configure axios to use CSRF-TOKEN from Rails
@@ -9,6 +10,7 @@ axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
 axios.defaults.headers.common['Accept'] = 'application/json'
 
 window.$axios = axios
+window.$autosize = autosize
 window.$swal = swal.mixin({
   confirmButtonColor: '#587afd',
   cancelButtonColor: '#FE429E'

@@ -7,7 +7,7 @@ const Form = props => (
   <React.Fragment>
     <div className="flex mx-auto h-full bg-image bg-primary-lightest">
       <div className="flex flex-col w-full items-center justify-center">
-        <div className="card flex flex-col p-8 w-1/3 justify-center">
+        <div className="card flex flex-col p-8 w-1/4 justify-center">
           <img className="pb-8" alt="Twidown" src={props.logo} />
 
           <form onSubmit={props.handleSubmit}>

@@ -22,7 +22,7 @@
 
 * {
   @apply text-dark-light;
-  font-family: Ubuntu;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
 .bg-image {
@@ -30,10 +30,30 @@
   background-size: 40em;
 }
 
-[data-react-class], html, body, #container { height: 100%!important; }
+
+html, body, #container { height: 100%!important; @apply bg-primary-lightest; }
+
+[data-react-class='sessions/SignUp'] { height: 100%; } 
+[data-react-class='sessions/SignIn'] { height: 100%; } 
+
+.duration-1 { transition-duration: 0.1s; }
+.duration-2 { transition-duration: 0.2s; }
+.duration-3 { transition-duration: 0.3s; }
+.duration-4 { transition-duration: 0.4s; }
+.duration-5 { transition-duration: 0.5s; }
+.duration-6 { transition-duration: 0.6s; }
+.duration-7 { transition-duration: 0.7s; }
+.duration-8 { transition-duration: 0.8s; }
+.duration-9 { transition-duration: 0.9s; }
+
+.profile-pic-size {
+  height: 90px;
+  width: 90px;
+}
 
 .btn {
-  @apply font-bold py-2 px-4 rounded text-center cursor-pointer;
+  @apply cursor-pointer py-2 px-4 rounded text-center;
+  transition-duration: 0.2s;
 }
 .btn.primary {
   @apply bg-primary text-white;
@@ -44,7 +64,11 @@
 
 
 a {
-  @apply text-primary no-underline;
+  @apply text-primary-light duration-2 no-underline cursor-pointer;
+}
+
+a:hover {
+  @apply text-primary;
 }
 
 ul {
@@ -65,12 +89,30 @@ label {
   @apply outline-none bg-white border-primary-light;
 }
 
+.textarea {
+  @apply appearance-none inline-block text-sm w-full bg-grey-lightest text-dark border border-dark-lighter rounded py-3 px-4 mb-3;
+  overflow-wrap: break-word;
+  min-height: 70px;
+  resize: none;
+}
+.textarea:focus {
+  @apply outline-none bg-white border-primary-light;
+}
+
 .card {
-  @apply max-w-sm rounded overflow-hidden shadow-md bg-white;
+  @apply rounded overflow-hidden shadow-md bg-white;
 }
 
 .title {
   @apply font-bold py-2 text-lg;
+}
+
+.fa {
+  @apply mr-1;
+  color: inherit;
+}
+.fa-normal {
+  margin: none;
 }
 
 @tailwind components;
