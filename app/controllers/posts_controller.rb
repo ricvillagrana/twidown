@@ -2,6 +2,7 @@ class PostsController < ApplicationController
 
   def index
     @posts = current_user.posts + current_user.following_posts
+    @posts.sort_by!(&:created_at).reverse!
     respond_to do |format|
       format.html
       format.json {render json: { posts: @posts }, include: [:user] }
