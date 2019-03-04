@@ -1,13 +1,14 @@
 import React from "react"
 import PropTypes from "prop-types"
+import { ActionCableProvider, ActionCable } from 'actioncable-client-react'
 
 import TopBar from './TopBar'
 import InfoCard from './InfoCard'
 import NewPost from './NewPost'
 import Post from './Post'
 
-import profileImage from '../../../assets/images/profile.png'
-import coverImage from '../../../assets/images/cover.png'
+import profileImage from '../../../../assets/images/profile.png'
+import coverImage from '../../../../assets/images/cover.png'
 
 const HomeView= props => (
   <div className="flex flex-col mb-4">
@@ -20,9 +21,11 @@ const HomeView= props => (
         <InfoCard user={props.user} />
       </div>
       <div className="flex flex-col w-1/3 px-2">
-        <NewPost />
-        <Post user={props.user} content={"Any other text <div class='markdown-parser'><h1>Title</h1><p>this is a text that has a <strong>bold</strong> text and <em>italics</em></p><p>Know more here <a href='img_url'><img src='https://pbs.twimg.com/media/D0dmgnVWoAEv5C2.jpg' alt='alt' /></a></p></div>"} />
-        <Post user={props.user} content={"Any other text <div class='markdown-parser'><h1>Title</h1><p>this is a text that has a <strong>bold</strong> text and <em>italics</em></p><p>Know more here <a href='img_url'><img src='https://pbs.twimg.com/media/D0dmgnVWoAEv5C2.jpg' alt='alt' /></a></p></div>"} />
+        <NewPost handleUpdateFeed={props.handleUpdateFeed} />
+
+        {props.posts.map(post => (
+          <Post key={post.id} user={post.user} content={post.content} date={post.created_at} />
+        ))}
 
         <div className="bg-white p-5 rounded-b border-t border-solid border-primary-lightest flex justify-center">
           <a href="#up">Go up</a>
@@ -45,16 +48,30 @@ class Home extends React.Component {
         { label: 'People', icon: 'fa fa-users', link: '/' },
         { label: 'Options', icon: 'fa fa-cogs', link: '/' }
       ],
+      posts: [],
       user: null
     }
 
     this.fetchUser = this.fetchUser.bind(this)
+    this.fetchPosts = this.fetchPosts.bind(this)
+    this.handlePostReceived = this.handlePostReceived.bind(this)
+    this.handlePostConnected = this.handlePostConnected.bind(this)
   }
 
   componentDidMount() {
     this.fetchUser()
+    this.fetchPosts()
   }
 
+  handlePostReceived(post) {
+    this.fetchPosts()
+    console.log('received')
+  } 
+
+  handlePostConnected() {
+    console.log('connected')
+  }
+  
   fetchUser() {
     $axios.get('/users/me')
       .then(({data}) => {
@@ -75,13 +92,43 @@ class Home extends React.Component {
       })
   }
 
-  render () {
+  fetchPosts() {
+    $axios.get('/posts.json')
+      .then(({data}) => {
+        this.setState({
+          posts: data.posts
+        })
+      })
+      .catch(err => {
+        this.showErrors([err])
+      })
+  }
+
+  showErrors(errors) {
+    const errorsHTML = errors.map(err => `<li>${err}</li>`).join('')
+    $swal.fire({
+      type: 'error',
+      title: 'Error',
+      html: `<ul>${errorsHTML}</ul>`
+    })
+  }
+
+  render() {
     return (
       <React.Fragment>
-        <HomeView
-          user={this.state.user}
-          menu={this.state.menu} />
-      </React.Fragment>
+        <ActionCableProvider url={`ws://${window.location.host}/cable`}>
+          <HomeView
+            user={this.state.user}
+            posts={this.state.posts}
+            menu={this.state.menu}
+            handleUpdateFeed={this.fetchUser} />
+          {this.state.user && <ActionCable
+            channel={'PostChannel'}
+            room={`${this.state.user.id}`}
+            onConnected={this.handlePostConnected}
+            onReceived={this.handlePostReceived}></ActionCable>}
+        </ActionCableProvider>
+     </React.Fragment>
     )
   }
 }

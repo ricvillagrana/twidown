@@ -7,4 +7,5 @@ Rails.application.routes.draw do
 
   get '/users/me', to: 'sessions#show'
 
+  resources :posts
 end

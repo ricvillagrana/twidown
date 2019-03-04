@@ -16,8 +16,8 @@ ActiveRecord::Schema.define(version: 2019_03_01_150932) do
   enable_extension "plpgsql"
 
   create_table "follows", force: :cascade do |t|
-    t.integer "following"
-    t.integer "follower"
+    t.integer "following_id"
+    t.integer "follower_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
