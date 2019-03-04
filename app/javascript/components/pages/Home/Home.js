@@ -1,5 +1,6 @@
 import React from "react"
 import PropTypes from "prop-types"
+import { ActionCableProvider, ActionCable } from 'actioncable-client-react'
 
 import TopBar from './TopBar'
 import InfoCard from './InfoCard'
@@ -53,6 +54,8 @@ class Home extends React.Component {
 
     this.fetchUser = this.fetchUser.bind(this)
     this.fetchPosts = this.fetchPosts.bind(this)
+    this.handlePostReceived = this.handlePostReceived.bind(this)
+    this.handlePostConnected = this.handlePostConnected.bind(this)
   }
 
   componentDidMount() {
@@ -60,6 +63,15 @@ class Home extends React.Component {
     this.fetchPosts()
   }
 
+  handlePostReceived(post) {
+    this.fetchPosts()
+    console.log('received')
+  } 
+
+  handlePostConnected() {
+    console.log('connected')
+  }
+  
   fetchUser() {
     $axios.get('/users/me')
       .then(({data}) => {
@@ -101,17 +113,22 @@ class Home extends React.Component {
     })
   }
 
-
-
-  render () {
+  render() {
     return (
       <React.Fragment>
-        <HomeView
-          user={this.state.user}
-          posts={this.state.posts}
-          menu={this.state.menu}
-          handleUpdateFeed={this.fetchUser} />
-      </React.Fragment>
+        <ActionCableProvider url={`ws://${window.location.host}/cable`}>
+          <HomeView
+            user={this.state.user}
+            posts={this.state.posts}
+            menu={this.state.menu}
+            handleUpdateFeed={this.fetchUser} />
+          {this.state.user && <ActionCable
+            channel={'PostChannel'}
+            room={`${this.state.user.id}`}
+            onConnected={this.handlePostConnected}
+            onReceived={this.handlePostReceived}></ActionCable>}
+        </ActionCableProvider>
+     </React.Fragment>
     )
   }
 }
