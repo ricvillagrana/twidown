@@ -28,20 +28,29 @@ class NewPost extends React.Component {
   handleSubmitPost() {
     $axios.post('/posts', { post: this.state.post })
       .then(({data}) => {
-        this.setState({
-          post: {
-            content: ''
-          }
-        }, () => this.props.handleUpdateFeed())
-      })
+        if (data.status === 200) {
+          this.setState({
+            post: {
+              content: ''
+            }
+          })
+        } else {
+          this.showErrors(data.errors) 
+        }
+     })
       .catch(err => {
-        $toast.fire({
-          type: 'error',
-          title: 'Error creating the post',
-          text: `${err}`
-        })
+        this.showErrors([err]) 
       })
   }
+
+  showErrors(errors) {
+    $toast.fire({
+      type: 'error',
+      title: 'Error',
+      text: errors.map(err => `${err}`).join(', ')
+    })
+  }
+ 
 
   componentDidMount() {
     $autosize(document.getElementById('textarea-post'))
