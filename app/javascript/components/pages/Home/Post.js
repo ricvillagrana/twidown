@@ -7,7 +7,7 @@ import profileImage from '../../../../assets/images/profile.png'
 const UserInfo = props => (
   <React.Fragment>
     {props.user && <div>
-      <div className="flex mb-2 -mb-5">
+      <div className="flex mb-2 -mb-6">
         <img src={ props.user.profile_image || profileImage } className="h-12 w-12 rounded-full" />
     	<div className="flex flex-row ml-4">
           <a className="font-bold text-black" href={`/users/${props.user.username}`}>{props.user.name}</a>
@@ -40,8 +40,8 @@ class Post extends React.Component {
       <React.Fragment>
         <div className="bg-white p-5 border-t border-solid border-primary-lightest flex flex-col">
           <UserInfo user={props.user} />
-          <div className="ml-16">
-            {renderHTML(props.content)}
+          <div className="ml-16 text-sm">
+            {renderHTML($markdown.render(props.content))}
           </div>
           <PostControls />
         </div>

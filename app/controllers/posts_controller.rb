@@ -41,6 +41,13 @@ class PostsController < ApplicationController
     Post.find(params[:id])
   end
 
+  def parsed_posts
+    @posts.map do |post|
+      post.content = MarkdownParser.parse(post.content)
+      post
+    end
+  end
+
   def post_params
     params
       .require(:post)
