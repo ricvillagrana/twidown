@@ -21,7 +21,7 @@
 @import url('https://fonts.googleapis.com/css?family=Ubuntu|Ubuntu+Condensed|Ubuntu+Mono');
 
 * {
-  @apply text-dark-light;
+  @apply text-dark;
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
@@ -92,7 +92,7 @@ label {
 .textarea {
   @apply appearance-none inline-block text-sm w-full bg-grey-lightest text-dark border border-dark-lighter rounded py-3 px-4 mb-3;
   overflow-wrap: break-word;
-  min-height: 70px;
+  min-height: 10px;
   resize: none;
 }
 .textarea:focus {
@@ -113,6 +113,35 @@ label {
 }
 .fa-normal {
   margin: none;
+}
+
+.emoji {
+  height: 2em;
+}
+
+/**************************************/
+/**********| MarkdownParser |**********/
+/**************************************/
+
+
+h1 { @apply font-bold text-3xl; }
+h2 { @apply font-bold text-2xl; }
+h3 { @apply font-bold text-xl; }
+h4 { @apply font-bold text-lg; }
+h5 { @apply font-bold text-base; }
+h6 { @apply font-bold text-sm; }
+
+pre {
+  margin: 3px 0px !important;
+  overflow-y: scroll;
+}
+
+ul {
+  padding: 15px;
+}
+
+li {
+  list-style: disc;
 }
 
 @tailwind components;

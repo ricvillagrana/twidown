@@ -1,7 +1,22 @@
 import axios from 'axios';
 import swal from 'sweetalert2';
 import autosize from 'autosize'
+import MarkdownIt from 'markdown-it'
+import emoji from 'markdown-it-emoji'
+import hljs from 'highlight.js'
 
+const markdown = new MarkdownIt({
+  highlight: function (str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return hljs.highlight(lang, str).value;
+      } catch (__) {}
+    }
+ 
+    return ''; // use external default escaping
+  }
+})
+markdown.use(emoji)
 
 // Configure axios to use CSRF-TOKEN from Rails
 const token = document.head.querySelector('meta[name="csrf-token"]');
@@ -11,6 +26,7 @@ axios.defaults.headers.common['Accept'] = 'application/json'
 
 window.$axios = axios
 window.$autosize = autosize
+window.$markdown = markdown
 window.$swal = swal.mixin({
   confirmButtonColor: '#587afd',
   cancelButtonColor: '#FE429E'
@@ -26,4 +42,4 @@ window.$toast = swal.mixin({
 var componentRequireContext = require.context("components", true)
 var ReactRailsUJS = require("react_ujs")
 ReactRailsUJS.useContext(componentRequireContext)
-import "../css/tailwind.css"
+import "../css/tailwind.scss"
