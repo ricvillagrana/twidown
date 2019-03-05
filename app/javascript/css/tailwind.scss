@@ -115,6 +115,9 @@ label {
   margin: none;
 }
 
+.emoji {
+  height: 2em;
+}
 
 /**************************************/
 /**********| MarkdownParser |**********/
@@ -129,12 +132,8 @@ h5 { @apply font-bold text-base; }
 h6 { @apply font-bold text-sm; }
 
 pre {
-  @apply bg-dark;
   margin: 3px 0px !important;
   overflow-y: scroll;
-  code {
-    @apply text-white;
-  }
 }
 
 ul {

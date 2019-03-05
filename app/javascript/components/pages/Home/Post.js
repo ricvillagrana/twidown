@@ -20,7 +20,7 @@ const UserInfo = props => (
 
 const PostControls = props => (
   <React.Fragment>
-    <div className="flex flex-row justify-around mt-3">
+    <div className="flex flex-row justify-around mt-3 text-sm">
       <a><i className="fa fa-comment"></i>Comment</a>
       <a><i className="fa fa-share"></i>Repost</a>
       <a><i className="fa fa-heart"></i>Like</a>

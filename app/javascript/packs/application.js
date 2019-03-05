@@ -2,18 +2,10 @@ import axios from 'axios';
 import swal from 'sweetalert2';
 import autosize from 'autosize'
 import MarkdownIt from 'markdown-it'
+import emoji from 'markdown-it-emoji'
 import hljs from 'highlight.js'
 
-
-// Configure axios to use CSRF-TOKEN from Rails
-const token = document.head.querySelector('meta[name="csrf-token"]');
-axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
-
-axios.defaults.headers.common['Accept'] = 'application/json'
-
-window.$axios = axios
-window.$autosize = autosize
-window.$markdown = new MarkdownIt({
+const markdown = new MarkdownIt({
   highlight: function (str, lang) {
     if (lang && hljs.getLanguage(lang)) {
       try {
@@ -23,7 +15,18 @@ window.$markdown = new MarkdownIt({
  
     return ''; // use external default escaping
   }
-}) 
+})
+markdown.use(emoji)
+
+// Configure axios to use CSRF-TOKEN from Rails
+const token = document.head.querySelector('meta[name="csrf-token"]');
+axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+
+axios.defaults.headers.common['Accept'] = 'application/json'
+
+window.$axios = axios
+window.$autosize = autosize
+window.$markdown = markdown
 window.$swal = swal.mixin({
   confirmButtonColor: '#587afd',
   cancelButtonColor: '#FE429E'
