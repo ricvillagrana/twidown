@@ -25,7 +25,6 @@ const HomeView= props => (
 
         {props.posts.map(post => (
           <Post
-            emitDeletion={() => props.handleRemovePost(post.id)}
             key={post.id}
             itsMe={post.user.id === props.user.id}
             user={post.user}
@@ -69,9 +68,19 @@ class Home extends React.Component {
     this.fetchPosts()
   }
 
-  handlePostReceived(post) {
-    this.fetchPosts()
-    console.log('received')
+  appendPost(post) {
+    console.log('append', post)
+    let posts = this.state.posts
+    posts = [post, ...posts]
+    this.setState({ posts })
+  }
+
+  handlePostReceived({message}) {
+    const action = message.action
+    const post = JSON.parse(message.post)
+    if (action == 'created')   this.appendPost(post)
+    if (action == 'destroyed') this.handleRemovePost(post.id)
+    //this.fetchPosts()
   } 
 
   handlePostConnected() {
@@ -133,7 +142,6 @@ class Home extends React.Component {
             user={this.state.user}
             posts={this.state.posts}
             menu={this.state.menu}
-            handleRemovePost={this.handleRemovePost}
             handleUpdateFeed={this.fetchUser} />
           {this.state.user && <ActionCable
             channel={'PostChannel'}

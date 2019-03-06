@@ -60,7 +60,6 @@ class Post extends React.Component {
   }
 
   handleToggleMenu() {
-    console.log('toggle', this.state.menuOpen)
     this.setState({ menuOpen: !this.state.menuOpen })
   }
 
@@ -76,9 +75,7 @@ class Post extends React.Component {
       if (result.value) {
         $axios.delete(`/posts/${post.id}`)
           .then(({data}) => {
-            if (data.status === 200) {
-              this.props.emitDeletion()
-            } else {
+            if (data.status !== 200) {
               this.showErrors(data.errors)
             }
           })      
