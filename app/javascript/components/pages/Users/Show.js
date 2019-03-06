@@ -13,24 +13,34 @@ const HomeView= props => (
       <h1>{props.user.name}</h1>
       <h4 className="text-dark-light">@{props.user.username}</h4>
       
-      {!props.itsMe && props.me && props.me.following_ids.some(id => id === props.user.id) ? 
-      <button 
-        onClick={() => props.handleUnfollow()}
-        className="btn primary absolute self-end">
-        Unfollow
-      </button>
-      : 
-      <button 
-        onClick={() => props.handleFollow()}
-        className="btn primary absolute self-end">
-        Follow
-      </button>}
+      {!props.itsMe && <FollowButton
+        handleFollow={props.handleFollow}
+        handleUnfollow={props.handleUnfollow}
+        me={props.me}
+        user={props.user} />}
 
     </div>}
     <div className="p-3">
       Publications
     </div>
   </div>
+)
+
+const FollowButton = props => (
+  <React.Fragment>
+    {props.me && props.me.following_ids.some(id => id === props.user.id) ? 
+    <button 
+      onClick={() => props.handleUnfollow()}
+      className="btn primary absolute self-end">
+      Unfollow
+    </button>
+    : 
+    <button 
+      onClick={() => props.handleFollow()}
+      className="btn primary absolute self-end">
+      Follow
+    </button>}
+  </React.Fragment>
 )
 
 class Show extends React.Component {
