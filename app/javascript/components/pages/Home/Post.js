@@ -1,8 +1,29 @@
 import React from "react"
 import PropTypes from "prop-types"
+//import Modal from 'react-responsive-modal'
+import Modal from 'react-awesome-modal';
 import renderHTML from 'react-render-html'
+import NewPost from './NewPost'
 
 import profileImage from '../../../../assets/images/profile.png'
+
+const Menu = props => (
+  <div className="flex flex-col items-end absolute self-end">
+    <a onClick={props.handleToggleMenu} className=" text-grey">
+      <i className="fa fa-ellipsis-h fa-normal"></i>
+    </a>
+    <div className={`card flex flex-col text-sm duration-2 ${props.open ? 'rotate-x-0' : 'rotate-x-90'}`}>
+      <a className="py-2 px-4 text-grey-darker hover:text-grey-darkest border-b border-grey-lighter" onClick={() => props.handleEditPost(props.post)}>
+        <i className="fa fa-pencil"></i>
+        Edit
+      </a>
+      <a className="py-2 px-3 text-red hover:text-red-dark" onClick={() => props.handleDeletePost(props.post)}>
+        <i className="fa fa-trash"></i>
+        Delete
+      </a>
+    </div>
+  </div>
+)
 
 const UserInfo = props => (
   <React.Fragment>
@@ -28,10 +49,79 @@ const PostControls = props => (
   </React.Fragment>
 )
 
+const EditPostModal = props => (
+  <Modal
+    visible={props.open}
+    width="600"
+    effect="fadeInUp"
+    onClickAway={props.close}>
+    <div className="m-5">
+      <h3 className="border-b border-grey-light">Editing post</h3>
+      {props.post && <NewPost post={props.post} onSubmit={props.close} />}
+    </div>
+  </Modal>
+)
+
 class Post extends React.Component {
 
   constructor(props) {
     super(props)
+
+    this.state = {
+      menuOpen: false,
+      edit: {
+        open: false,
+        post: null
+      }
+    }
+
+    this.handleToggleMenu = this.handleToggleMenu.bind(this)
+    this.handleDeletePost = this.handleDeletePost.bind(this)
+    this.handleEditPost = this.handleEditPost.bind(this)
+  }
+
+  handleToggleMenu() {
+    this.setState({ menuOpen: !this.state.menuOpen })
+  }
+
+  handleEditPost(post) {
+    this.handleToggleMenu()
+    this.setState({
+      edit: {
+        open: true,
+        post
+      }
+    })
+  }
+
+  handleDeletePost(post) {
+    this.handleToggleMenu()
+    $swal.fire({
+      title: 'Delete this post?',
+      text: "You won't be able to revert this!",
+      type: 'warning',
+      showCancelButton: true,
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Delete post'
+    }).then((result) => {
+      if (result.value) {
+        $axios.delete(`/posts/${post.id}`)
+          .then(({data}) => {
+            if (data.status !== 200) {
+              this.showErrors(data.errors)
+            }
+          })      
+          .catch(err => this.showErrors([err]))
+      }
+    })
+  }
+
+  showErrors(errors) {
+    $toast.fire({
+      type: 'error',
+      title: 'Error',
+      text: errors.map(err => `${err}`).join(', ')
+    })
   }
 
   render () {
@@ -39,12 +129,22 @@ class Post extends React.Component {
     return (
       <React.Fragment>
         <div className="bg-white p-5 border-t border-solid border-primary-lightest flex flex-col">
+          {props.itsMe && <Menu 
+                            post={props.post}
+                            open={this.state.menuOpen}
+                            handleDeletePost={this.handleDeletePost}
+                            handleEditPost={this.handleEditPost}
+                            handleToggleMenu={this.handleToggleMenu} /> }
           <UserInfo user={props.user} />
           <div className="ml-16 text-sm">
-            {renderHTML($markdown.render(props.content))}
+            {renderHTML($markdown.render(props.post.content))}
           </div>
           <PostControls />
         </div>
+        <EditPostModal
+          close={() => this.setState({ edit: { open: false, post: null } })}
+          open={this.state.edit.open}
+          post={this.state.edit.post} />
       </React.Fragment>
     );
   }

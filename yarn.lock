@@ -5888,6 +5888,11 @@ react-attr-converter@^0.3.1:
   resolved "https://registry.yarnpkg.com/react-attr-converter/-/react-attr-converter-0.3.1.tgz#4a2abf6d907b7ddae4d862dfec80e489ce41ad6e"
   integrity sha512-dSxo2Mn6Zx4HajeCeQNLefwEO4kNtV/0E682R1+ZTyFRPqxDa5zYb5qM/ocqw9Bxr/kFQO0IUiqdV7wdHw+Cdg==
 
+react-awesome-modal@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/react-awesome-modal/-/react-awesome-modal-2.0.5.tgz#d19702f7e3bc1f43e734f5a60814c2d1593c693a"
+  integrity sha512-H+0xKBhcGJCoDtMww5K+XUzQtK+oRNpXr1VZoN1tbBgu+fzrLrF+ZkdRC1XiPLJ5gpVd9uR90yg8nyPTtYj/OQ==
+
 react-dom@^16.8.3:
   version "16.8.3"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.8.3.tgz#ae236029e66210783ac81999d3015dfc475b9c32"
