@@ -37,6 +37,10 @@ class Home extends React.Component {
     this.fetchPosts = this.fetchPosts.bind(this)
     this.handlePostReceived = this.handlePostReceived.bind(this)
     this.handlePostConnected = this.handlePostConnected.bind(this)
+
+    this.handleRemovePost = this.handleRemovePost.bind(this)
+    this.handleAppendPost = this.handleAppendPost.bind(this)
+    this.handleUpdatePost = this.handleUpdatePost.bind(this)
   }
 
   componentDidMount() {
@@ -44,15 +48,40 @@ class Home extends React.Component {
     this.fetchPosts()
   }
 
-  handlePostReceived(post) {
-    this.fetchPosts()
-    console.log('received')
+  handleAppendPost(post) {
+    let posts = this.state.posts
+    posts = [post, ...posts]
+    this.setState({ posts })
+  }
+
+  handleUpdatePost(updated) {
+    let posts = this.state.posts
+    posts = posts.map(post => {
+      if (post.id === updated.id) return updated
+      return post
+    })
+    this.setState({ posts })
+  }
+
+  handleRemovePost(id) {
+    let posts = this.state.posts
+    posts = posts.filter(post => post.id !== id)
+    this.setState({ posts })
+  }
+
+  handlePostReceived({message}) {
+    const action = message.action
+    const post = JSON.parse(message.post)
+
+    if (action == 'created')    this.handleAppendPost(post)
+    if (action == 'destroyed')  this.handleRemovePost(post.id)
+    if (action == 'updated')    this.handleUpdatePost(post)
   } 
 
   handlePostConnected() {
     console.log('connected')
   }
-  
+
   fetchUser() {
     $axios.get('/users/me')
       .then(({data}) => {
