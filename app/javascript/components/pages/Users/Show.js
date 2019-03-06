@@ -3,27 +3,26 @@ import PropTypes from "prop-types"
 import { ActionCableProvider, ActionCable } from 'actioncable-client-react'
 
 import Layout from './../../Layout/'
-import NewPost from './NewPost'
-import Post from './Post'
 
 import profileImage from '../../../../assets/images/profile.png'
 import coverImage from '../../../../assets/images/cover.png'
 
 const HomeView= props => (
-  <React.Fragment>
-    <NewPost handleUpdateFeed={props.handleUpdateFeed} />
-
-    {props.posts.map(post => (
-      <Post key={post.id} user={post.user} content={post.content} date={post.created_at} />
-    ))}
-
-    <div className="bg-white p-5 rounded-b border-t border-solid border-primary-lightest flex justify-center">
-      <a href="#up">Go up</a>
+  <div className="bg-white rounded">
+    {props.user && <div className="p-3 border-b border-primary-lightest flex flex-col justify-center">
+      <h1>{props.user.name}</h1>
+      <h4 className="text-dark-light">@{props.user.username}</h4>
+      {!props.itsMe && <button className="btn primary absolute self-end">
+        Follow
+      </button>}
+    </div>}
+    <div className="p-3">
+      Publications
     </div>
-  </React.Fragment>
+  </div>
 )
 
-class Home extends React.Component {
+class Show extends React.Component {
 
   constructor(props) {
     super(props)
@@ -41,6 +40,7 @@ class Home extends React.Component {
 
   componentDidMount() {
     this.fetchUser()
+    this.fetchMe()
     this.fetchPosts()
   }
 
@@ -53,8 +53,28 @@ class Home extends React.Component {
     console.log('connected')
   }
   
-  fetchUser() {
+  fetchMe() {
     $axios.get('/users/me')
+      .then(({data}) => {
+        const user = data.user
+        if (!user.profile_image) user.profile_image = profileImage
+        if (!user.cover_image) user.cover_image = coverImage
+
+        this.setState({
+          me: user
+        })
+      })
+      .catch(err => {
+        $toast({
+          type: 'error',
+          title: 'Error',
+          text: 'Error on fetch user info.'
+        })
+      })
+  }
+
+  fetchUser() {
+    $axios.get(`/users/${this.props.user.username}`)
       .then(({data}) => {
         const user = data.user
         if (!user.profile_image) user.profile_image = profileImage
@@ -95,15 +115,16 @@ class Home extends React.Component {
   }
 
   render() {
+    const itsMe = this.state.user && this.state.me && this.state.user.id === this.state.me.id
     return (
       <React.Fragment>
-        <Layout>
+        <Layout user={this.state.user}>
           <ActionCableProvider url={`ws://${window.location.host}/cable`}>
             <HomeView
+              itsMe={itsMe}
               user={this.state.user}
               posts={this.state.posts}
-              menu={this.state.menu}
-              handleUpdateFeed={this.fetchUser} />
+              menu={this.state.menu} />
             {this.state.user && <ActionCable
               channel={'PostChannel'}
               room={`${this.state.user.id}`}
@@ -116,4 +137,4 @@ class Home extends React.Component {
   }
 }
 
-export default Home
+export default Show

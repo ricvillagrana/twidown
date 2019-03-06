@@ -1,7 +1,7 @@
 import React from "react"
 import PropTypes from "prop-types"
 
-import logo from '../../../../assets/images/logo_h.svg'
+import logo from '../../../assets/images/logo_h.svg'
 
 const Menu = props => (
   <div className="flex flex-col items-end mr-8">
@@ -9,7 +9,12 @@ const Menu = props => (
     <img className="h-8 w-8 rounded-full" src={props.user.profile_image} alt={props.user.username} />
     </p>}
     <div className={`card fixed mt-12 py-2 w-32 ${(props.open ? 'block' : 'hidden')}`}>
-      <a href="/"><p className="py-2 px-4 hover:bg-primary hover:text-white"><i className="fa fa-user"></i>Profile</p></a>
+      {props.user && <a href={`/users/${props.user.username}`}>
+        <p className="py-2 px-4 hover:bg-primary hover:text-white">
+          <i className="fa fa-user"></i>
+          Profile
+        </p>
+      </a>}
 
       <hr className="border-solid border-t border-dark-lightest" />
 

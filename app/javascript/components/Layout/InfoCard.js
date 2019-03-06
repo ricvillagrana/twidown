@@ -16,16 +16,18 @@ class InfoCard extends React.Component {
             <img src={ props.user.profile_image } className="profile-pic-size rounded-full border-solid border-white border-2 -mt-3" />
           </div>
           <div className="text-center px-3 pb-6 pt-2">
-            <h3 className="text-2xl">{props.user.name}</h3>
-            <p className="mt-2 font-sans font-light text-primary-light">@{props.user.username}</p>
+            <a href={`/users/${props.user.username}`}>
+              <h3 className="text-2xl">{props.user.name}</h3>
+              <p className="mt-2 font-sans font-light text-primary-light">@{props.user.username}</p>
+            </a>
           </div>
           <div className="flex justify-center pb-3">
             <div className="text-center mr-3 border-r pr-3">
-              <h3>34</h3>
+              <h3>{props.user.followers_count}</h3>
               <span>Followers</span>
             </div>
             <div className="text-center">
-              <h3>42</h3>
+              <h3>{props.user.following_count}</h3>
               <span>Posts</span>
             </div>
           </div>
