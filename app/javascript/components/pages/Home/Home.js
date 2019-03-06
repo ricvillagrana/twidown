@@ -25,6 +25,7 @@ const HomeView= props => (
 
         {props.posts.map(post => (
           <Post
+            emitDeletion={() => props.handleRemovePost(post.id)}
             key={post.id}
             itsMe={post.user.id === props.user.id}
             user={post.user}
@@ -60,6 +61,7 @@ class Home extends React.Component {
     this.fetchPosts = this.fetchPosts.bind(this)
     this.handlePostReceived = this.handlePostReceived.bind(this)
     this.handlePostConnected = this.handlePostConnected.bind(this)
+    this.handleRemovePost = this.handleRemovePost.bind(this)
   }
 
   componentDidMount() {
@@ -75,7 +77,13 @@ class Home extends React.Component {
   handlePostConnected() {
     console.log('connected')
   }
-  
+
+  handleRemovePost(id) {
+    let posts = this.state.posts
+    posts = posts.filter(post => post.id !== id)
+    this.setState({ posts })
+  }
+
   fetchUser() {
     $axios.get('/users/me')
       .then(({data}) => {
@@ -125,6 +133,7 @@ class Home extends React.Component {
             user={this.state.user}
             posts={this.state.posts}
             menu={this.state.menu}
+            handleRemovePost={this.handleRemovePost}
             handleUpdateFeed={this.fetchUser} />
           {this.state.user && <ActionCable
             channel={'PostChannel'}

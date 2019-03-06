@@ -14,7 +14,7 @@ const Menu = props => (
         <i className="fa fa-pencil"></i>
         Edit
       </a>
-      <a className="py-2 px-3 text-red hover:text-red-dark">
+      <a className="py-2 px-3 text-red hover:text-red-dark" onClick={() => props.handleDeletePost(props.post)}>
         <i className="fa fa-trash"></i>
         Delete
       </a>
@@ -56,6 +56,7 @@ class Post extends React.Component {
     }
 
     this.handleToggleMenu = this.handleToggleMenu.bind(this)
+    this.handleDeletePost = this.handleDeletePost.bind(this)
   }
 
   handleToggleMenu() {
@@ -63,12 +64,47 @@ class Post extends React.Component {
     this.setState({ menuOpen: !this.state.menuOpen })
   }
 
+  handleDeletePost(post) {
+    $swal.fire({
+      title: 'Delete this post?',
+      text: "You won't be able to revert this!",
+      type: 'warning',
+      showCancelButton: true,
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Delete post'
+    }).then((result) => {
+      if (result.value) {
+        $axios.delete(`/posts/${post.id}`)
+          .then(({data}) => {
+            if (data.status === 200) {
+              this.props.emitDeletion()
+            } else {
+              this.showErrors(data.errors)
+            }
+          })      
+          .catch(err => this.showErrors([err]))
+      }
+    })
+  }
+
+  showErrors(errors) {
+    $toast.fire({
+      type: 'error',
+      title: 'Error',
+      text: errors.map(err => `${err}`).join(', ')
+    })
+  }
+
   render () {
     const props = this.props
     return (
       <React.Fragment>
         <div className="bg-white p-5 border-t border-solid border-primary-lightest flex flex-col">
-          {props.itsMe && <Menu post={props.post} open={this.state.menuOpen} handleToggleMenu={this.handleToggleMenu} /> }
+          {props.itsMe && <Menu 
+                            post={props.post}
+                            open={this.state.menuOpen}
+                            handleDeletePost={this.handleDeletePost}
+                            handleToggleMenu={this.handleToggleMenu} /> }
           <UserInfo user={props.user} />
           <div className="ml-16 text-sm">
             {renderHTML($markdown.render(props.post.content))}
