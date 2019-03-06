@@ -12,9 +12,20 @@ const HomeView= props => (
     {props.user && <div className="p-3 border-b border-primary-lightest flex flex-col justify-center">
       <h1>{props.user.name}</h1>
       <h4 className="text-dark-light">@{props.user.username}</h4>
-      {!props.itsMe && <button className="btn primary absolute self-end">
+      
+      {!props.itsMe && props.me && props.me.following_ids.some(id => id === props.user.id) ? 
+      <button 
+        onClick={() => props.handleUnfollow()}
+        className="btn primary absolute self-end">
+        Unfollow
+      </button>
+      : 
+      <button 
+        onClick={() => props.handleFollow()}
+        className="btn primary absolute self-end">
         Follow
       </button>}
+
     </div>}
     <div className="p-3">
       Publications
@@ -29,19 +40,61 @@ class Show extends React.Component {
 
     this.state = {
       posts: [],
-      user: null
+      user: null,
+      me: null
     }
 
-    this.fetchUser = this.fetchUser.bind(this)
-    this.fetchPosts = this.fetchPosts.bind(this)
-    this.handlePostReceived = this.handlePostReceived.bind(this)
-    this.handlePostConnected = this.handlePostConnected.bind(this)
+    this.fetchUser            = this.fetchUser.bind(this)
+    this.fetchMe              = this.fetchMe.bind(this)
+    this.fetchPosts           = this.fetchPosts.bind(this)
+    this.handlePostReceived   = this.handlePostReceived.bind(this)
+    this.handlePostConnected  = this.handlePostConnected.bind(this)
+    this.handleFollow         = this.handleFollow.bind(this)
+    this.handleUnfollow       = this.handleUnfollow.bind(this)
   }
 
   componentDidMount() {
     this.fetchUser()
     this.fetchMe()
     this.fetchPosts()
+  }
+
+  handleFollow() {
+    $axios.post('/users/follow', { id: this.state.user.id })
+      .then(({data}) => {
+        if (data.status === 200) {
+          this.setState({
+            me: {
+              ...this.state.me,
+              following_ids: [
+                data.followed.id,
+                ...this.state.me.following_ids
+              ]
+            }
+          })
+        } else {
+          this.showErrors(data.errors)
+        }
+      })
+      .catch(err => this.showErrors([err]))
+  }
+
+  handleUnfollow() {
+    $axios.delete(`/users/unfollow/${this.state.user.id}`)
+      .then(({data}) => {
+        if (data.status === 200) {
+          let following_ids = this.state.me.following_ids.filter(id => id !== data.unfollowed.id)
+          this.setState({
+            me: {
+              ...this.state.me,
+              following_ids
+            }
+          })
+        } else {
+          this.showErrors(data.errors)
+        }
+      })
+      .catch(err => this.showErrors([err]))
   }
 
   handlePostReceived(post) {
@@ -106,6 +159,7 @@ class Show extends React.Component {
   }
 
   showErrors(errors) {
+    console.log(errors)
     const errorsHTML = errors.map(err => `<li>${err}</li>`).join('')
     $swal.fire({
       type: 'error',
@@ -122,7 +176,10 @@ class Show extends React.Component {
           <ActionCableProvider url={`ws://${window.location.host}/cable`}>
             <HomeView
               itsMe={itsMe}
+              handleFollow={this.handleFollow}
+              handleUnfollow={this.handleUnfollow}
               user={this.state.user}
+              me={this.state.me}
               posts={this.state.posts}
               menu={this.state.menu} />
             {this.state.user && <ActionCable

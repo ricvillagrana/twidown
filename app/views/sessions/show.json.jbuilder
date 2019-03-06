@@ -9,4 +9,7 @@ json.user do
   json.followers_count @user.followers.size
   json.following_count @user.following.size
   json.posts_count @user.posts.size
+  json.follower_ids @user.followers.pluck(:id)
+  json.following_ids @user.following.pluck(:id)
+  json.post_ids @user.posts.pluck(:id)
 end

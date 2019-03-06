@@ -25,4 +25,12 @@ class User < ApplicationRecord
   def follower_posts
     followers.map(&:posts).flatten
   end
+
+  def follow(user)
+    self.following.append(user) unless self.following.any? { |following| following.id == user.id }
+  end
+
+  def unfollow(user)
+    self.following.delete(user.id)
+  end
 end

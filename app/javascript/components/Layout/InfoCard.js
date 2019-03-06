@@ -26,8 +26,12 @@ class InfoCard extends React.Component {
               <h3>{props.user.followers_count}</h3>
               <span>Followers</span>
             </div>
-            <div className="text-center">
+            <div className="text-center mr-3 border-r pr-3">
               <h3>{props.user.following_count}</h3>
+              <span>Following</span>
+            </div>
+            <div className="text-center">
+              <h3>{props.user.posts_count}</h3>
               <span>Posts</span>
             </div>
           </div>

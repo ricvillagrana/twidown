@@ -6,10 +6,26 @@ class UsersController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        unless user
-          render json: { status: 500 }
-        end
+        render json: { status: 500 } unless user
       end
+    end
+  end
+
+  def follow
+    user = User.find(params[:id])
+    if current_user.follow(user)
+      render json: { followed: user, follower: current_user, status: 200} 
+    else
+      render json: { status: 500 }
+    end
+  end
+
+  def unfollow
+    user = User.find(params[:id])
+    if current_user.unfollow(user)
+      render json: { unfollowed: user, follower: current_user, status: 200}
+    else
+      render json: { status: 500 }
     end
   end
 
