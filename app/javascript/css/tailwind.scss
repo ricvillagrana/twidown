@@ -46,6 +46,27 @@ html, body, #container { height: 100%!important; @apply bg-primary-lightest; }
 .duration-8 { transition-duration: 0.8s; }
 .duration-9 { transition-duration: 0.9s; }
 
+.rotate-x-0 {
+  transform: rotateX(0deg);
+  transform-origin: top;
+}
+.rotate-x-45 {
+  transform: rotateX(45deg);
+  transform-origin: top;
+}
+.rotate-x-90 {
+  transform: rotateX(90deg);
+  transform-origin: top;
+}
+.rotate-x-135 {
+  transform: rotateX(135deg);
+  transform-origin: top;
+}
+.rotate-x-180 {
+  transform: rotateX(180deg);
+  transform-origin: top;
+}
+
 .profile-pic-size {
   height: 90px;
   width: 90px;

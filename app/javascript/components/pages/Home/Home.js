@@ -24,7 +24,11 @@ const HomeView= props => (
         <NewPost handleUpdateFeed={props.handleUpdateFeed} />
 
         {props.posts.map(post => (
-          <Post key={post.id} user={post.user} content={post.content} date={post.created_at} />
+          <Post
+            key={post.id}
+            itsMe={post.user.id === props.user.id}
+            user={post.user}
+            post={post} />
         ))}
 
         <div className="bg-white p-5 rounded-b border-t border-solid border-primary-lightest flex justify-center">

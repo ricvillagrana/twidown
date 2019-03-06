@@ -4,6 +4,24 @@ import renderHTML from 'react-render-html'
 
 import profileImage from '../../../../assets/images/profile.png'
 
+const Menu = props => (
+  <div className="flex flex-col items-end absolute self-end">
+    <a onClick={props.handleToggleMenu} className=" text-grey">
+      <i className="fa fa-ellipsis-h fa-normal"></i>
+    </a>
+    <div className={`card flex flex-col text-sm duration-2 ${props.open ? 'rotate-x-0' : 'rotate-x-90'}`}>
+      <a className="py-2 px-4 text-grey-darker hover:text-grey-darkest border-b border-grey-lighter">
+        <i className="fa fa-pencil"></i>
+        Edit
+      </a>
+      <a className="py-2 px-3 text-red hover:text-red-dark">
+        <i className="fa fa-trash"></i>
+        Delete
+      </a>
+    </div>
+  </div>
+)
+
 const UserInfo = props => (
   <React.Fragment>
     {props.user && <div>
@@ -32,6 +50,17 @@ class Post extends React.Component {
 
   constructor(props) {
     super(props)
+
+    this.state = {
+      menuOpen: false
+    }
+
+    this.handleToggleMenu = this.handleToggleMenu.bind(this)
+  }
+
+  handleToggleMenu() {
+    console.log('toggle', this.state.menuOpen)
+    this.setState({ menuOpen: !this.state.menuOpen })
   }
 
   render () {
@@ -39,9 +68,10 @@ class Post extends React.Component {
     return (
       <React.Fragment>
         <div className="bg-white p-5 border-t border-solid border-primary-lightest flex flex-col">
+          {props.itsMe && <Menu post={props.post} open={this.state.menuOpen} handleToggleMenu={this.handleToggleMenu} /> }
           <UserInfo user={props.user} />
           <div className="ml-16 text-sm">
-            {renderHTML($markdown.render(props.content))}
+            {renderHTML($markdown.render(props.post.content))}
           </div>
           <PostControls />
         </div>
