@@ -21,7 +21,7 @@ const HomeView= props => (
         <InfoCard user={props.user} />
       </div>
       <div className="flex flex-col w-1/3 px-2">
-        <NewPost handleUpdateFeed={props.handleUpdateFeed} />
+        <NewPost />
 
         {props.posts.map(post => (
           <Post
@@ -60,7 +60,10 @@ class Home extends React.Component {
     this.fetchPosts = this.fetchPosts.bind(this)
     this.handlePostReceived = this.handlePostReceived.bind(this)
     this.handlePostConnected = this.handlePostConnected.bind(this)
+
     this.handleRemovePost = this.handleRemovePost.bind(this)
+    this.handleAppendPost = this.handleAppendPost.bind(this)
+    this.handleUpdatePost = this.handleUpdatePost.bind(this)
   }
 
   componentDidMount() {
@@ -68,29 +71,38 @@ class Home extends React.Component {
     this.fetchPosts()
   }
 
-  appendPost(post) {
-    console.log('append', post)
+  handleAppendPost(post) {
     let posts = this.state.posts
     posts = [post, ...posts]
     this.setState({ posts })
   }
 
-  handlePostReceived({message}) {
-    const action = message.action
-    const post = JSON.parse(message.post)
-    if (action == 'created')   this.appendPost(post)
-    if (action == 'destroyed') this.handleRemovePost(post.id)
-    //this.fetchPosts()
-  } 
-
-  handlePostConnected() {
-    console.log('connected')
+  handleUpdatePost(updated) {
+    let posts = this.state.posts
+    posts = posts.map(post => {
+      if (post.id === updated.id) return updated
+      return post
+    })
+    this.setState({ posts })
   }
 
   handleRemovePost(id) {
     let posts = this.state.posts
     posts = posts.filter(post => post.id !== id)
     this.setState({ posts })
+  }
+
+  handlePostReceived({message}) {
+    const action = message.action
+    const post = JSON.parse(message.post)
+
+    if (action == 'created')    this.handleAppendPost(post)
+    if (action == 'destroyed')  this.handleRemovePost(post.id)
+    if (action == 'updated')    this.handleUpdatePost(post)
+  } 
+
+  handlePostConnected() {
+    console.log('connected')
   }
 
   fetchUser() {
@@ -141,8 +153,7 @@ class Home extends React.Component {
           <HomeView
             user={this.state.user}
             posts={this.state.posts}
-            menu={this.state.menu}
-            handleUpdateFeed={this.fetchUser} />
+            menu={this.state.menu} />
           {this.state.user && <ActionCable
             channel={'PostChannel'}
             room={`${this.state.user.id}`}

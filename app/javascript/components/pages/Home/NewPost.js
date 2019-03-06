@@ -1,14 +1,15 @@
 import React from "react"
 import PropTypes from "prop-types"
 import renderHTML from 'react-render-html'
-import Modal from 'react-responsive-modal'
+import Modal from 'react-awesome-modal'
 
 const MarkdownPreview = props => (
-  <Modal open={props.open} onClose={props.onClose} center>
-    <h3 className="border-b border-grey-light">Post preview</h3>
-    <p>Here you can preview changes and how your post will look like.</p>
-    {renderHTML($markdown.render(props.content))}
-  </Modal>
+  <React.Fragment>
+    {props.open && <div className="px-5 py-3 bg-white">
+      <h3 className="border-b border-grey-light mb-2">Post preview</h3>
+      {renderHTML($markdown.render(props.content))}
+    </div>}
+  </React.Fragment>
 )
 
 class NewPost extends React.Component {
@@ -16,16 +17,17 @@ class NewPost extends React.Component {
   constructor(props) {
     super(props)
 
+    const post = props.post ? props.post : { content: '' }
 
     this.state = {
-      post: {
-        content: ''
-      },
+      post,
       preview: false
     }
 
     this.handlePostTextChange = this.handlePostTextChange.bind(this)
     this.handleSubmitPost     = this.handleSubmitPost.bind(this)
+    this.handleUpdatePost     = this.handleUpdatePost.bind(this)
+    this.handleCreatePos      = this.handleCreatePost.bind(this)
 
     this.handleTogglePreview  = this.handleTogglePreview.bind(this)
   }
@@ -37,12 +39,30 @@ class NewPost extends React.Component {
   handlePostTextChange(content) {
     this.setState({
       post: {
+        ...this.state.post,
         content
       }
     })
   }
 
   handleSubmitPost() {
+    if (this.state.post.id) {
+      this.handleUpdatePost(this.state.post)
+    } else {
+      this.handleCreatePost(this.state.post)    
+    }
+    if (this.props.onSubmit) this.props.onSubmit()
+  }
+
+  handleUpdatePost(post) {
+    $axios.put(`/posts/${post.id}`, post)
+      .then(({data}) => {
+        if (data.status !== 200) this.showErrors(data.errors)
+      })
+      .catch(err => this.showErrors([err]))
+  }
+
+  handleCreatePost(post) {
     $axios.post('/posts', { post: this.state.post })
       .then(({data}) => {
         if (data.status === 200) {
@@ -51,13 +71,9 @@ class NewPost extends React.Component {
               content: ''
             }
           })
-        } else {
-          this.showErrors(data.errors) 
-        }
-     })
-      .catch(err => {
-        this.showErrors([err]) 
+        } else this.showErrors(data.errors)
       })
+      .catch(err => this.showErrors([err]))
   }
 
   showErrors(errors) {
@@ -70,7 +86,9 @@ class NewPost extends React.Component {
  
 
   componentDidMount() {
-    $autosize(document.getElementById('textarea-post'))
+    [...document.getElementsByClassName('textarea-post')].map(textarea => {
+      $autosize(textarea)
+    })
   }
 
   render () {
@@ -79,10 +97,9 @@ class NewPost extends React.Component {
       <React.Fragment>
         <div className="bg-white rounded-t p-3 flex flex-col">
           <textarea
-            id="textarea-post"
             value={this.state.post.content}
             onChange={e => this.handlePostTextChange(e.target.value)}
-            className="textarea m-h-4 focus:bg-white"
+            className="textarea-post textarea m-h-4 focus:bg-white"
             placeholder="Share an idea (With markdown if you want)"></textarea>
           <div className="flex flex-row justify-end items-center">
             <a onClick={this.handleTogglePreview} className="text-primary-light text-xs pr-3">Preview Markdown</a>
@@ -93,7 +110,7 @@ class NewPost extends React.Component {
           </div>
         </div>
         <MarkdownPreview
-          onClose={this.handleTogglePreview}
+          close={this.handleTogglePreview}
           open={this.state.preview}
           content={this.state.post.content} />
       </React.Fragment>

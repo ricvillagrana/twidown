@@ -1,6 +1,9 @@
 import React from "react"
 import PropTypes from "prop-types"
+//import Modal from 'react-responsive-modal'
+import Modal from 'react-awesome-modal';
 import renderHTML from 'react-render-html'
+import NewPost from './NewPost'
 
 import profileImage from '../../../../assets/images/profile.png'
 
@@ -10,7 +13,7 @@ const Menu = props => (
       <i className="fa fa-ellipsis-h fa-normal"></i>
     </a>
     <div className={`card flex flex-col text-sm duration-2 ${props.open ? 'rotate-x-0' : 'rotate-x-90'}`}>
-      <a className="py-2 px-4 text-grey-darker hover:text-grey-darkest border-b border-grey-lighter">
+      <a className="py-2 px-4 text-grey-darker hover:text-grey-darkest border-b border-grey-lighter" onClick={() => props.handleEditPost(props.post)}>
         <i className="fa fa-pencil"></i>
         Edit
       </a>
@@ -46,24 +49,53 @@ const PostControls = props => (
   </React.Fragment>
 )
 
+const EditPostModal = props => (
+  <Modal
+    visible={props.open}
+    width="600"
+    effect="fadeInUp"
+    onClickAway={props.close}>
+    <div className="m-5">
+      <h3 className="border-b border-grey-light">Editing post</h3>
+      {props.post && <NewPost post={props.post} onSubmit={props.close} />}
+    </div>
+  </Modal>
+)
+
 class Post extends React.Component {
 
   constructor(props) {
     super(props)
 
     this.state = {
-      menuOpen: false
+      menuOpen: false,
+      edit: {
+        open: false,
+        post: null
+      }
     }
 
     this.handleToggleMenu = this.handleToggleMenu.bind(this)
     this.handleDeletePost = this.handleDeletePost.bind(this)
+    this.handleEditPost = this.handleEditPost.bind(this)
   }
 
   handleToggleMenu() {
     this.setState({ menuOpen: !this.state.menuOpen })
   }
 
+  handleEditPost(post) {
+    this.handleToggleMenu()
+    this.setState({
+      edit: {
+        open: true,
+        post
+      }
+    })
+  }
+
   handleDeletePost(post) {
+    this.handleToggleMenu()
     $swal.fire({
       title: 'Delete this post?',
       text: "You won't be able to revert this!",
@@ -101,6 +133,7 @@ class Post extends React.Component {
                             post={props.post}
                             open={this.state.menuOpen}
                             handleDeletePost={this.handleDeletePost}
+                            handleEditPost={this.handleEditPost}
                             handleToggleMenu={this.handleToggleMenu} /> }
           <UserInfo user={props.user} />
           <div className="ml-16 text-sm">
@@ -108,6 +141,10 @@ class Post extends React.Component {
           </div>
           <PostControls />
         </div>
+        <EditPostModal
+          close={() => this.setState({ edit: { open: false, post: null } })}
+          open={this.state.edit.open}
+          post={this.state.edit.post} />
       </React.Fragment>
     );
   }

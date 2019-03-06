@@ -8,6 +8,10 @@ class Post < ApplicationRecord
     broadcast_to_followers(:destroyed)
   end
 
+  after_update do
+    broadcast_to_followers(:updated)
+  end
+
   belongs_to :user
   belongs_to :post, optional: true
 
