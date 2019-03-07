@@ -3,10 +3,9 @@ module BroadcastService
     def broadcast(params)
       action = params[:action]
       post = params[:post]
-      user = params[:user]
 
-      broadcast_message(user.id, action, post)
-      user.followers.each do |follower|
+      broadcast_message(post.user.id, action, post)
+      post.user.followers.each do |follower|
         broadcast_message(follower.id, action, post)
       end
     end
@@ -14,7 +13,7 @@ module BroadcastService
     def broadcast_message(id, action, post)
       PostChannel.broadcast_to(
         id,
-        message: { post: post.to_json(include: [:user]), action: action }
+        message: { post: post.to_json(include: [:user, users: { only: [:name, :username] }], methods: [:likes_count]), action: action }
       )
     end   
   end
