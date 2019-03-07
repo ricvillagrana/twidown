@@ -8,7 +8,7 @@ import NewPost from './NewPost'
 import profileImage from '../../../../assets/images/profile.png'
 
 const Menu = props => (
-  <div className="flex flex-col items-end absolute self-end">
+  <div className={`flex flex-col items-end absolute self-end ${props.open ? 'z-40' : 'z-0'}`}>
     <a onClick={props.handleToggleMenu} className=" text-grey">
       <i className="fa fa-ellipsis-h fa-normal"></i>
     </a>
@@ -39,15 +39,27 @@ const UserInfo = props => (
   </React.Fragment>
 )
 
-const PostControls = props => (
-  <React.Fragment>
+const PostControls = props => {
+  const liked = props.post.like_ids.some(id => id === props.currentUser.id)
+
+  const toggleLike = () => {
+    if (liked)  props.handleDislike()
+    else        props.handleLike()
+  }
+
+  return <React.Fragment>
     <div className="flex flex-row justify-around mt-3 text-sm">
-      <a><i className="fa fa-comment"></i>Comment</a>
-      <a><i className="fa fa-share"></i>Repost</a>
-      <a><i className="fa fa-heart"></i>Like</a>
+      <a className="text-grey-darker"><i className="fa fa-comment"></i>Comment</a>
+      <a className="text-grey-darker"><i className="fa fa-share"></i>Repost</a>
+      <a onClick={() => toggleLike()} className={`tooltip text-${liked ? 'red' : 'grey-darker'}`}>
+        {props.post.likes_count}
+        <i className="fa fa-heart ml-2"></i>
+        {liked ? 'Liked' : 'Like'}
+        <span className="tooltiptext">{props.post.likes_count === 0 ? 'No likes' : props.post.users.map(u => u.username).join(', ')}</span>
+      </a>
     </div>
   </React.Fragment>
-)
+}
 
 const EditPostModal = props => (
   <Modal
@@ -77,11 +89,32 @@ class Post extends React.Component {
 
     this.handleToggleMenu = this.handleToggleMenu.bind(this)
     this.handleDeletePost = this.handleDeletePost.bind(this)
-    this.handleEditPost = this.handleEditPost.bind(this)
+    this.handleEditPost   = this.handleEditPost.bind(this)
+
+    this.handleLike       = this.handleLike.bind(this)
+    this.handleDislike     = this.handleDislike.bind(this)
   }
 
   handleToggleMenu() {
     this.setState({ menuOpen: !this.state.menuOpen })
+  }
+
+  handleLike() {
+    $axios.post('/posts/like', { id: this.props.post.id })
+      .then(({data}) => {
+        if (data.status !== 200) {
+          this.showErrors(data.errors)
+        } else console.log(data)
+      }).catch(err => this.showErrors([err]))
+  }
+
+  handleDislike() {
+    $axios.delete(`/posts/dislike/${this.props.post.id}`)
+      .then(({data}) => {
+        if (data.status !== 200) {
+          this.showErrors(data.errors)
+        } else console.log(data)
+      }).catch(err => this.showErrors([err]))
   }
 
   handleEditPost(post) {
@@ -139,7 +172,11 @@ class Post extends React.Component {
           <div className="ml-16 text-sm">
             {renderHTML($markdown.render(props.post.content))}
           </div>
-          <PostControls />
+          <PostControls
+            handleDislike={this.handleDislike}
+            handleLike={this.handleLike}
+            currentUser={props.currentUser}
+            post={props.post} />
         </div>
         <EditPostModal
           close={() => this.setState({ edit: { open: false, post: null } })}

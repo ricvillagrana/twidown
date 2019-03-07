@@ -15,4 +15,20 @@ class Post < ApplicationRecord
     likes.destroy_all
   end
 
+  def likes_count
+    likes.size
+  end
+
+  def like_ids
+    users.pluck(:id)
+  end
+
+  def liked_by(user)
+    users.append(user)
+  end
+
+  def unliked_by(user)
+    users.delete(user)
+  end
+
 end
