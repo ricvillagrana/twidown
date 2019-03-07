@@ -13,7 +13,18 @@ module BroadcastService
     def broadcast_message(id, action, post)
       PostChannel.broadcast_to(
         id,
-        message: { post: post.to_json(include: [:user, users: { only: [:name, :username] }], methods: [:likes_count]), action: action }
+        message: {
+          post: post.to_json(
+            include: [
+              :user,
+              users: {
+                only: [:name, :username]
+              }
+            ],
+            methods: [:likes_count, :like_ids]
+          ),
+          action: action
+        }
       )
     end   
   end

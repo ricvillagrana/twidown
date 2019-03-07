@@ -6,7 +6,16 @@ class PostsController < ApplicationController
     @posts.sort_by!(&:created_at).reverse!
     respond_to do |format|
       format.html
-      format.json {render json: { posts: @posts }, include: [:user] }
+      format.json {
+        render json: { posts: @posts }, 
+        include: [
+          :user,
+          users: {
+            only: [:name, :username]
+          }
+        ],
+        methods: [:likes_count, :like_ids]
+      }
     end
   end
 

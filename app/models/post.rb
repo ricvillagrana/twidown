@@ -19,6 +19,10 @@ class Post < ApplicationRecord
     likes.size
   end
 
+  def like_ids
+    users.pluck(:id)
+  end
+
   def liked_by(user)
     users.append(user)
   end

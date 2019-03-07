@@ -39,15 +39,24 @@ const UserInfo = props => (
   </React.Fragment>
 )
 
-const PostControls = props => (
-  <React.Fragment>
+const PostControls = props => {
+  const liked = props.post.like_ids.some(id => id === props.currentUser.id)
+  const toggleLike = () => {
+    if (liked)  props.handleUnlike()
+    else        props.handleLike()
+  }
+
+  return <React.Fragment>
     <div className="flex flex-row justify-around mt-3 text-sm">
-      <a><i className="fa fa-comment"></i>Comment</a>
-      <a><i className="fa fa-share"></i>Repost</a>
-      <a><i className="fa fa-heart"></i>Like</a>
+      <a className="text-grey-darker"><i className="fa fa-comment"></i>Comment</a>
+      <a className="text-grey-darker"><i className="fa fa-share"></i>Repost</a>
+      <a onClick={() => toggleLike()} className={`text-${liked ? 'red' : 'grey-darker'}`}>
+        <i className="fa fa-heart"></i>
+        {liked ? 'Liked' : 'Like'}
+      </a>
     </div>
   </React.Fragment>
-)
+}
 
 const EditPostModal = props => (
   <Modal
@@ -77,11 +86,27 @@ class Post extends React.Component {
 
     this.handleToggleMenu = this.handleToggleMenu.bind(this)
     this.handleDeletePost = this.handleDeletePost.bind(this)
-    this.handleEditPost = this.handleEditPost.bind(this)
+    this.handleEditPost   = this.handleEditPost.bind(this)
+
+    this.handleLike       = this.handleLike.bind(this)
+    this.handleUnlike     = this.handleUnlike.bind(this)
   }
 
   handleToggleMenu() {
     this.setState({ menuOpen: !this.state.menuOpen })
+  }
+
+  handleLike() {
+    $axios.post('/posts/like', { id: this.props.post.id })
+      .then(({data}) => {
+        if (data.status !== 200) {
+          this.showErrors(data.errors)
+        } else console.log(data)
+      }).catch(err => this.showErrors([err]))
+  }
+
+  handleUnlike() {
+    $toast.fire('unlike')
   }
 
   handleEditPost(post) {
@@ -139,7 +164,11 @@ class Post extends React.Component {
           <div className="ml-16 text-sm">
             {renderHTML($markdown.render(props.post.content))}
           </div>
-          <PostControls />
+          <PostControls
+            handleUnlike={this.handleUnlike}
+            handleLike={this.handleLike}
+            currentUser={props.currentUser}
+            post={props.post} />
         </div>
         <EditPostModal
           close={() => this.setState({ edit: { open: false, post: null } })}
