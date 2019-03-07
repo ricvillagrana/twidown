@@ -14,5 +14,5 @@ Rails.application.routes.draw do
   delete '/users/unfollow/:id', to: 'users#unfollow'
 
   post '/posts/like', to: 'posts#like'
-  delete '/posts/unlike/:id', to: 'posts#unlike'
+  delete '/posts/dislike/:id', to: 'posts#dislike'
 end

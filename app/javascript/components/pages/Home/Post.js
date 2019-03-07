@@ -42,7 +42,7 @@ const UserInfo = props => (
 const PostControls = props => {
   const liked = props.post.like_ids.some(id => id === props.currentUser.id)
   const toggleLike = () => {
-    if (liked)  props.handleUnlike()
+    if (liked)  props.handleDislike()
     else        props.handleLike()
   }
 
@@ -51,7 +51,8 @@ const PostControls = props => {
       <a className="text-grey-darker"><i className="fa fa-comment"></i>Comment</a>
       <a className="text-grey-darker"><i className="fa fa-share"></i>Repost</a>
       <a onClick={() => toggleLike()} className={`text-${liked ? 'red' : 'grey-darker'}`}>
-        <i className="fa fa-heart"></i>
+        {props.post.likes_count}
+        <i className="fa fa-heart ml-2"></i>
         {liked ? 'Liked' : 'Like'}
       </a>
     </div>
@@ -89,7 +90,7 @@ class Post extends React.Component {
     this.handleEditPost   = this.handleEditPost.bind(this)
 
     this.handleLike       = this.handleLike.bind(this)
-    this.handleUnlike     = this.handleUnlike.bind(this)
+    this.handleDislike     = this.handleDislike.bind(this)
   }
 
   handleToggleMenu() {
@@ -105,8 +106,13 @@ class Post extends React.Component {
       }).catch(err => this.showErrors([err]))
   }
 
-  handleUnlike() {
-    $toast.fire('unlike')
+  handleDislike() {
+    $axios.delete(`/posts/dislike/${this.props.post.id}`)
+      .then(({data}) => {
+        if (data.status !== 200) {
+          this.showErrors(data.errors)
+        } else console.log(data)
+      }).catch(err => this.showErrors([err]))
   }
 
   handleEditPost(post) {
@@ -165,7 +171,7 @@ class Post extends React.Component {
             {renderHTML($markdown.render(props.post.content))}
           </div>
           <PostControls
-            handleUnlike={this.handleUnlike}
+            handleDislike={this.handleDislike}
             handleLike={this.handleLike}
             currentUser={props.currentUser}
             post={props.post} />
