@@ -7,9 +7,12 @@ Rails.application.routes.draw do
 
   get '/users/me', to: 'sessions#show'
 
+  resources :users, only: [:index]
   resources :posts
   
   get '/users/:username', to: 'users#show'
   post '/users/follow', to: 'users#follow'
   delete '/users/unfollow/:id', to: 'users#unfollow'
+
+  get '/people', to: 'pages#people'
 end
