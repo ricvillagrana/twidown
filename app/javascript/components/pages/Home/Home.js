@@ -16,6 +16,7 @@ const HomeView= props => (
     {props.user && props.posts.map(post => (
       <Post
         key={post.id}
+        currentUser={props.user}
         itsMe={post.user.id === props.user.id}
         user={post.user}
         post={post} />
