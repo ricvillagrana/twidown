@@ -8,7 +8,7 @@ import NewPost from './NewPost'
 import profileImage from '../../../../assets/images/profile.png'
 
 const Menu = props => (
-  <div className="flex flex-col items-end absolute self-end">
+  <div className={`flex flex-col items-end absolute self-end ${props.open ? 'z-40' : 'z-0'}`}>
     <a onClick={props.handleToggleMenu} className=" text-grey">
       <i className="fa fa-ellipsis-h fa-normal"></i>
     </a>
@@ -41,6 +41,7 @@ const UserInfo = props => (
 
 const PostControls = props => {
   const liked = props.post.like_ids.some(id => id === props.currentUser.id)
+
   const toggleLike = () => {
     if (liked)  props.handleDislike()
     else        props.handleLike()
@@ -50,10 +51,11 @@ const PostControls = props => {
     <div className="flex flex-row justify-around mt-3 text-sm">
       <a className="text-grey-darker"><i className="fa fa-comment"></i>Comment</a>
       <a className="text-grey-darker"><i className="fa fa-share"></i>Repost</a>
-      <a onClick={() => toggleLike()} className={`text-${liked ? 'red' : 'grey-darker'}`}>
+      <a onClick={() => toggleLike()} className={`tooltip text-${liked ? 'red' : 'grey-darker'}`}>
         {props.post.likes_count}
         <i className="fa fa-heart ml-2"></i>
         {liked ? 'Liked' : 'Like'}
+        <span className="tooltiptext">{props.post.likes_count === 0 ? 'No likes' : props.post.users.map(u => u.username).join(', ')}</span>
       </a>
     </div>
   </React.Fragment>

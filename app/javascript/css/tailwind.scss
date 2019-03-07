@@ -165,6 +165,41 @@ li {
   list-style: disc;
 }
 
+
+/*** ToolTip ***/
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  //width: 120px;
+  @apply bg-dark text-white px-2;
+  max-width: 300px;
+  overflow-y: wrap;
+
+  opacity: 0.9;
+  border-radius: 6px;
+  padding: 5px 7px;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  top: 120%;
+  //left: 50%;
+  margin-left: -60px;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
 @tailwind components;
 
 /**
