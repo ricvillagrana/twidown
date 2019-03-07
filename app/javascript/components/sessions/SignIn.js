@@ -73,7 +73,6 @@ class SignIn extends React.Component {
     e.preventDefault()
     $axios.post('/users/login', { user: this.state.user })
       .then(({data}) => {
-        console.log(data)
         if (data.status === 200) {
           window.location = '/'
         } else {

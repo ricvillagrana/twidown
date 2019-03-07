@@ -135,7 +135,6 @@ class SignUp extends React.Component {
 
   showErrors(errors) {
     const errorsHTML = errors.map(err => `<li>${err}</li>`).join('')
-    console.log(errorsHTML)
     $swal.fire({
       type: 'info',
       title: 'Some errors were found',
