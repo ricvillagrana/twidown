@@ -2,7 +2,7 @@ class UsersController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @users = User.all_without(current_user)
+    @users = User.everyone_but(current_user)
     respond_to do |format|
       format.html
       format.json { render json: { users: @users, status: 200 } }

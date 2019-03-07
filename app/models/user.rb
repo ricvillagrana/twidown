@@ -18,7 +18,7 @@ class User < ApplicationRecord
   has_many :following, through: :following_follow
   has_many :followers, through: :followers_follow
 
-  scope :all_without, -> (user) { where('id != ?', user.id) }
+  scope :everyone_but, -> (user) { where('id != ?', user.id) }
 
   def following_posts
     following.map(&:posts).flatten
