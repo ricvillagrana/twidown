@@ -126,6 +126,7 @@ class Post extends React.Component {
 
   render () {
     const props = this.props
+    console.log(this.props, props)
     return (
       <React.Fragment>
         <div className="bg-white p-5 border-t border-solid border-primary-lightest flex flex-col">

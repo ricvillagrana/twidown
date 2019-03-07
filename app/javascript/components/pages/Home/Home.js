@@ -11,10 +11,14 @@ import coverImage from '../../../../assets/images/cover.png'
 
 const HomeView= props => (
   <React.Fragment>
-    <NewPost handleUpdateFeed={props.handleUpdateFeed} />
+    <NewPost />
 
-    {props.posts.map(post => (
-      <Post key={post.id} user={post.user} content={post.content} date={post.created_at} />
+    {props.user && props.posts.map(post => (
+      <Post
+        key={post.id}
+        itsMe={post.user.id === props.user.id}
+        user={post.user}
+        post={post} />
     ))}
 
     <div className="bg-white p-5 rounded-b border-t border-solid border-primary-lightest flex justify-center">
@@ -131,8 +135,7 @@ class Home extends React.Component {
             <HomeView
               user={this.state.user}
               posts={this.state.posts}
-              menu={this.state.menu}
-              handleUpdateFeed={this.fetchUser} />
+              menu={this.state.menu} />
             {this.state.user && <ActionCable
               channel={'PostChannel'}
               room={`${this.state.user.id}`}
