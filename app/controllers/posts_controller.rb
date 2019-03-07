@@ -23,7 +23,7 @@ class PostsController < ApplicationController
     @post = current_user.posts.new(post_params)
 
     if @post.save
-      BroadcastService.broadcast(post: @post, action: :created)
+      Broadcast::Post.created(@post)
       render json: { status: 200, post: @post }
     else
       render json: { status: 500, errors: @post.errors.full_messages }
@@ -32,7 +32,7 @@ class PostsController < ApplicationController
 
   def update
     if post.update!(post_params)
-      BroadcastService.broadcast(post: post, action: :updated)
+      Broadcast::Post.updated(post)
       render json: { status: 200, post: post }
     else
       render json: { status: 500, errors: post.errors.full_messages }
@@ -42,7 +42,7 @@ class PostsController < ApplicationController
   def destroy
     deleted_post = post
     if post.destroy
-      BroadcastService.broadcast(post: deleted_post, action: :destroyed)
+      Broadcast::Post.destroyed(deleted_post)
       render json: { status: 200 }
     else
       render json: { status: 500, errors: post.errors.full_messages }
@@ -51,7 +51,7 @@ class PostsController < ApplicationController
 
   def like
     if post.liked_by(current_user)
-      BroadcastService.broadcast(post: post, action: :updated)
+      Broadcast::Post.updated(post)
       render json: { status: 200 }
     else
       render json: { status: 500, errors: post.errors.full_messages }
@@ -60,7 +60,7 @@ class PostsController < ApplicationController
   
   def dislike
     if post.unliked_by(current_user)
-      BroadcastService.broadcast(post: post, action: :updated)
+      Broadcast::Post.updated(post)
       render json: { status: 200 }
     else
       render json: { status: 500, errors: post.errors.full_messages }
