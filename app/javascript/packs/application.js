@@ -24,6 +24,8 @@ axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
 
 axios.defaults.headers.common['Accept'] = 'application/json'
 
+window.$actioncableURL = `ws${window.location.protocol === 'https:' ? 's' : ''}://${window.location.host}/cable`
+
 window.$axios = axios
 window.$autosize = autosize
 window.$markdown = markdown

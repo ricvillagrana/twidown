@@ -183,7 +183,7 @@ class Show extends React.Component {
     return (
       <React.Fragment>
         <Layout user={this.state.user}>
-          <ActionCableProvider url={`ws://${window.location.host}/cable`}>
+          <ActionCableProvider url={$actioncableURL}>
             <HomeView
               itsMe={itsMe}
               handleFollow={this.handleFollow}

@@ -131,7 +131,7 @@ class Home extends React.Component {
     return (
       <React.Fragment>
         <Layout>
-          <ActionCableProvider url={`ws://${window.location.host}/cable`}>
+          <ActionCableProvider url={$actioncableURL}>
             <HomeView
               user={this.state.user}
               posts={this.state.posts}

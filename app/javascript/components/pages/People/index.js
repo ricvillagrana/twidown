@@ -174,7 +174,7 @@ class Show extends React.Component {
     return (
       <React.Fragment>
         <Layout user={this.state.user}>
-          <ActionCableProvider url={`ws://${window.location.host}/cable`}>
+          <ActionCableProvider url={$actioncableURL}>
             <div className="flex flex-col bg-white rounded p-3">
               {this.state.users.map(user => <UserCard
               handleFollow={this.handleFollow}
