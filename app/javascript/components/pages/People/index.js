@@ -14,14 +14,30 @@ const HomeView= props => (
       <h4 className="text-dark-light">@{props.user.username}</h4>
       
       {!props.itsMe && <FollowButton
-        handleFollow={props.handleFollow}
-        handleUnfollow={props.handleUnfollow}
+        handleFollow={props.handleFollow(props.user.id)}
+        handleUnfollow={props.handleUnfollow(props.user.id)}
         me={props.me}
         user={props.user} />}
 
     </div>}
-    <div className="p-3">
-      Publications
+  </div>
+)
+
+const UserCard = props => (
+  <div className="flex flex-row justify-between items-center">
+    <div className="flex mb-2">
+      <img src={ props.user.profile_image || profileImage } className="h-12 w-12 rounded-full" />
+      <div className="flex flex-col ml-4">
+        <a className="font-bold text-black" href={`/users/${props.user.username}`}>{props.user.name}</a>
+        <a className="text-grey" href={`/users/${props.user.username}`}>@{props.user.username}</a>
+      </div>
+    </div>
+    <div className="flex">
+      {props.me && <FollowButton
+      handleFollow={() => props.handleFollow(props.user.id)}
+      handleUnfollow={() => props.handleUnfollow(props.user.id)}
+        me={props.me}
+        user={props.user} />}
     </div>
   </div>
 )
@@ -30,14 +46,14 @@ const FollowButton = props => (
   <React.Fragment>
     {props.me && props.me.following_ids.some(id => id === props.user.id) ? 
     <button 
-      onClick={() => props.handleUnfollow()}
-      className="btn red absolute self-end">
+      onClick={(id) => props.handleUnfollow(id)}
+      className="btn red">
       Unfollow
     </button>
     : 
     <button 
-      onClick={() => props.handleFollow()}
-      className="btn primary absolute self-end">
+      onClick={(id) => props.handleFollow(id)}
+      className="btn primary">
       Follow
     </button>}
   </React.Fragment>
@@ -49,28 +65,23 @@ class Show extends React.Component {
     super(props)
 
     this.state = {
-      posts: [],
-      user: null,
+      users: [],
       me: null
     }
 
-    this.fetchUser            = this.fetchUser.bind(this)
+    this.fetchUsers           = this.fetchUsers.bind(this)
     this.fetchMe              = this.fetchMe.bind(this)
-    this.fetchPosts           = this.fetchPosts.bind(this)
-    this.handlePostReceived   = this.handlePostReceived.bind(this)
-    this.handlePostConnected  = this.handlePostConnected.bind(this)
     this.handleFollow         = this.handleFollow.bind(this)
     this.handleUnfollow       = this.handleUnfollow.bind(this)
   }
 
   componentDidMount() {
-    this.fetchUser()
+    this.fetchUsers()
     this.fetchMe()
-    this.fetchPosts()
   }
 
-  handleFollow() {
-    $axios.post('/users/follow', { id: this.state.user.id })
+  handleFollow(id) {
+    $axios.post('/users/follow', { id })
       .then(({data}) => {
         if (data.status === 200) {
           this.setState({
@@ -89,8 +100,8 @@ class Show extends React.Component {
       .catch(err => this.showErrors([err]))
   }
 
-  handleUnfollow() {
-    $axios.delete(`/users/unfollow/${this.state.user.id}`)
+  handleUnfollow(id) {
+    $axios.delete(`/users/unfollow/${id}`)
       .then(({data}) => {
         if (data.status === 200) {
           let following_ids = this.state.me.following_ids.filter(id => id !== data.unfollowed.id)
@@ -106,16 +117,7 @@ class Show extends React.Component {
       })
       .catch(err => this.showErrors([err]))
   }
-
-  handlePostReceived(post) {
-    this.fetchPosts()
-    console.log('received')
-  } 
-
-  handlePostConnected() {
-    console.log('connected')
-  }
-  
+ 
   fetchMe() {
     $axios.get('/users/me')
       .then(({data}) => {
@@ -136,15 +138,16 @@ class Show extends React.Component {
       })
   }
 
-  fetchUser() {
-    $axios.get(`/users/${this.props.user.username}`)
+  fetchUsers() {
+    $axios.get(`/users.json`)
       .then(({data}) => {
-        const user = data.user
-        if (!user.profile_image) user.profile_image = profileImage
-        if (!user.cover_image) user.cover_image = coverImage
-
+        const users = data.users.map(user => {
+          if (!user.profile_image) user.profile_image = profileImage
+          if (!user.cover_image) user.cover_image = coverImage
+          return user
+        })
         this.setState({
-          user
+          users
         })
       })
       .catch(err => {
@@ -153,18 +156,6 @@ class Show extends React.Component {
           title: 'Error',
           text: 'Error on fetch user info.'
         })
-      })
-  }
-
-  fetchPosts() {
-    $axios.get('/posts.json')
-      .then(({data}) => {
-        this.setState({
-          posts: data.posts
-        })
-      })
-      .catch(err => {
-        this.showErrors([err])
       })
   }
 
@@ -184,14 +175,15 @@ class Show extends React.Component {
       <React.Fragment>
         <Layout user={this.state.user}>
           <ActionCableProvider url={$actioncableURL}>
-            <HomeView
-              itsMe={itsMe}
+            <div className="flex flex-col bg-white rounded p-3">
+              {this.state.users.map(user => <UserCard
               handleFollow={this.handleFollow}
               handleUnfollow={this.handleUnfollow}
-              user={this.state.user}
               me={this.state.me}
-              posts={this.state.posts}
-              menu={this.state.menu} />
+              key={user.id}
+              user={user} />)}
+            </div>
+
             {this.state.user && <ActionCable
               channel={'PostChannel'}
               room={`${this.state.user.id}`}

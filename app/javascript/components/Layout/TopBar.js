@@ -57,7 +57,7 @@ class TopBar extends React.Component {
             </p>
             {this.props.menuList.map(item => 
               <p key={item.label} className="pr-8">
-                <a herf={item.link}>
+                <a href={item.link}>
                   <i className={item.icon}></i>
                   {item.label}
                 </a>
