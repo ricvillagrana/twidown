@@ -82,6 +82,12 @@ html, body, #container { height: 100%!important; @apply bg-primary-lightest; }
 .btn.primary:hover {
   @apply bg-primary-light;
 }
+.btn.red {
+  @apply border border-red text-red;
+}
+.btn.red:hover {
+  @apply border-red-light;
+}
 
 
 a {

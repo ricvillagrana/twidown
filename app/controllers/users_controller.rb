@@ -1,6 +1,14 @@
 class UsersController < ApplicationController
   before_action :authenticate_user!
 
+  def index
+    @users = User.everyone_but(current_user)
+    respond_to do |format|
+      format.html
+      format.json { render json: { users: @users, status: 200 } }
+    end
+  end
+
   def show
     @user = user
     respond_to do |format|
