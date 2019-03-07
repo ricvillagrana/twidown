@@ -2,8 +2,7 @@ import React from "react"
 import PropTypes from "prop-types"
 import { ActionCableProvider, ActionCable } from 'actioncable-client-react'
 
-import TopBar from './TopBar'
-import InfoCard from './InfoCard'
+import Layout from './../../Layout/'
 import NewPost from './NewPost'
 import Post from './Post'
 
@@ -11,34 +10,17 @@ import profileImage from '../../../../assets/images/profile.png'
 import coverImage from '../../../../assets/images/cover.png'
 
 const HomeView= props => (
-  <div className="flex flex-col mb-4">
-    <TopBar
-      user={props.user}
-      menuList={props.menu} />  
-    <div className="flex flex-row justify-arround w-full mt-4 mb-8">
-      <div className="flex flex-col w-1/6"></div>
-      <div className="flex flex-col w-1/6 px-2">
-        <InfoCard user={props.user} />
-      </div>
-      <div className="flex flex-col w-1/3 px-2">
-        <NewPost />
+  <React.Fragment>
+    <NewPost handleUpdateFeed={props.handleUpdateFeed} />
 
-        {props.posts.map(post => (
-          <Post
-            key={post.id}
-            itsMe={post.user.id === props.user.id}
-            user={post.user}
-            post={post} />
-        ))}
+    {props.posts.map(post => (
+      <Post key={post.id} user={post.user} content={post.content} date={post.created_at} />
+    ))}
 
-        <div className="bg-white p-5 rounded-b border-t border-solid border-primary-lightest flex justify-center">
-          <a href="#up">Go up</a>
-        </div>
-      </div>
-      <div className="flex flex-col w-1/6 px-2"></div>
-      <div className="flex flex-col w-1/6"></div>
+    <div className="bg-white p-5 rounded-b border-t border-solid border-primary-lightest flex justify-center">
+      <a href="#up">Go up</a>
     </div>
-  </div>
+  </React.Fragment>
 )
 
 class Home extends React.Component {
@@ -47,11 +29,6 @@ class Home extends React.Component {
     super(props)
 
     this.state = {
-      menu: [
-        { label: 'Home', icon: 'fa fa-home', link: '/' },
-        { label: 'People', icon: 'fa fa-users', link: '/' },
-        { label: 'Options', icon: 'fa fa-cogs', link: '/' }
-      ],
       posts: [],
       user: null
     }
@@ -149,17 +126,20 @@ class Home extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <ActionCableProvider url={`ws://${window.location.host}/cable`}>
-          <HomeView
-            user={this.state.user}
-            posts={this.state.posts}
-            menu={this.state.menu} />
-          {this.state.user && <ActionCable
-            channel={'PostChannel'}
-            room={`${this.state.user.id}`}
-            onConnected={this.handlePostConnected}
-            onReceived={this.handlePostReceived}></ActionCable>}
-        </ActionCableProvider>
+        <Layout>
+          <ActionCableProvider url={`ws://${window.location.host}/cable`}>
+            <HomeView
+              user={this.state.user}
+              posts={this.state.posts}
+              menu={this.state.menu}
+              handleUpdateFeed={this.fetchUser} />
+            {this.state.user && <ActionCable
+              channel={'PostChannel'}
+              room={`${this.state.user.id}`}
+              onConnected={this.handlePostConnected}
+              onReceived={this.handlePostReceived}></ActionCable>}
+          </ActionCableProvider>
+        </Layout>
      </React.Fragment>
     )
   }

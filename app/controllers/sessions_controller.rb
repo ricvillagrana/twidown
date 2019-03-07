@@ -1,7 +1,8 @@
 class SessionsController < ApplicationController
 
   def show
-    render json: { user: current_user } if user_signed_in?
+    @user = current_user
+    render 'sessions/show.json.jbuilder'
   end
   
   def login
