@@ -77,7 +77,6 @@ gem 'figaro'
 # FontAwesome
 gem 'font-awesome-rails'
 
-# MarkdownParser
-#gem 'escape_utils'
-#gem 'markdown_parser', '~> 0.1.0.beta1'
+# Redis
+gem 'redis'
 
