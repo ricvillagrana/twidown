@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   root 'pages#index'
   devise_for :users, controllers: { sessions: 'users/sessions' }
-  mount ResqueWeb::Engine => "/resque_web"
+  mount ResqueWeb::Engine => "/resque"
 
   post '/users/register', to: 'sessions#create'
   post '/users/login', to: 'sessions#login'
