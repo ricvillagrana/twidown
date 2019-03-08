@@ -80,3 +80,6 @@ gem 'font-awesome-rails'
 # Redis
 gem 'redis'
 
+# Resque
+gem 'resque', require: 'resque/server'
+
