@@ -3,21 +3,20 @@ import PropTypes from "prop-types"
 import { ActionCableProvider, ActionCable } from 'actioncable-client-react'
 
 import Layout from './../../Layout/'
+import FollowButton from '../FollowButton'
 
 import profileImage from '../../../../assets/images/profile.png'
 import coverImage from '../../../../assets/images/cover.png'
 
 const HomeView= props => (
   <div className="bg-white rounded">
-    {props.user && <div className="p-3 border-b border-primary-lightest flex flex-col justify-center">
-      <h1>{props.user.name}</h1>
-      <h4 className="text-dark-light">@{props.user.username}</h4>
+    {props.user && <div className="p-3 border-b border-primary-lightest flex flex-row justify-between">
+      <div>
+        <h1>{props.user.name}</h1>
+        <h4 className="text-dark-light">@{props.user.username}</h4>
+      </div>
       
-      {!props.itsMe && <FollowButton
-        handleFollow={props.handleFollow}
-        handleUnfollow={props.handleUnfollow}
-        me={props.me}
-        user={props.user} />}
+      {!props.itsMe && <FollowButton user={props.user} />}
 
     </div>}
     <div className="p-3">
@@ -26,22 +25,22 @@ const HomeView= props => (
   </div>
 )
 
-const FollowButton = props => (
-  <React.Fragment>
-    {props.me && props.me.following_ids.some(id => id === props.user.id) ? 
-    <button 
-      onClick={() => props.handleUnfollow()}
-      className="btn red absolute self-end">
-      Unfollow
-    </button>
-    : 
-    <button 
-      onClick={() => props.handleFollow()}
-      className="btn primary absolute self-end">
-      Follow
-    </button>}
-  </React.Fragment>
-)
+//const FollowButton = props => (
+  //<React.Fragment>
+    //{props.me && props.me.following_ids.some(id => id === props.user.id) ? 
+    //<button 
+      //onClick={() => props.handleUnfollow()}
+      //className="btn red absolute self-end">
+      //Unfollow
+    //</button>
+    //: 
+    //<button 
+      //onClick={() => props.handleFollow()}
+      //className="btn primary absolute self-end">
+      //Follow
+    //</button>}
+  //</React.Fragment>
+//)
 
 class Show extends React.Component {
 
