@@ -11,5 +11,6 @@ class FollowerEmailJob < ApplicationJob
     follower  = User.find args[:follower_id]
     Resque.logger.info "Sending email to #{following.name}[id: #{following.id}] because #{follower.name}[id: #{follower.id}] followed them."
 
+    NewFollowerMailer.new_follower(following, follower)
   end
 end

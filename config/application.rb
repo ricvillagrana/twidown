@@ -14,6 +14,17 @@ module Twidown
     # Devise
     config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
 
+    config.action_mailer.delivery_method = :smtp
+      # SMTP settings for gmail
+      config.action_mailer.smtp_settings = {
+      address: "smtp.gmail.com",
+      port: 587,
+      user_name: 'ricardovillagranal@gmail.com',
+      password: ENV['GMAIL_PASSWORD'],
+      authentication: "plain",
+      enable_starttls_auto: true
+    }
+
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
