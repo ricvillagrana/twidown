@@ -5,6 +5,7 @@
     "@rails/webpacker": "3.5",
     "actioncable": "^5.2.2",
     "actioncable-client-react": "^1.0.3",
+    "animate.css": "^3.7.0",
     "autosize": "^4.0.2",
     "axios": "^0.18.0",
     "babel-preset-react": "^6.24.1",

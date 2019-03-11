@@ -4,6 +4,7 @@ import autosize from 'autosize'
 import MarkdownIt from 'markdown-it'
 import emoji from 'markdown-it-emoji'
 import hljs from 'highlight.js'
+import 'animate.css'
 
 const markdown = new MarkdownIt({
   highlight: function (str, lang) {

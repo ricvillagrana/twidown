@@ -7,6 +7,8 @@ class Post < ApplicationRecord
 
   has_many :users, through: :likes, class_name: 'User'
 
+  has_many :comments, class_name: 'Post', foreign_key: 'post_id'
+
   default_scope { order('created_at desc') }
 
   validates :content, length: { minimum: 1 }
