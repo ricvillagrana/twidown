@@ -68,7 +68,7 @@ const PostModal = props => (
     effect="fadeInUp"
     onClickAway={props.close}>
     <div className="m-5">
-      <h3 className="border-b border-grey-light">Commenting on another post</h3>
+      <h3 className="border-b border-grey-light">{props.post && props.post.id ? 'Editing post' : 'Commenting on another post'}</h3>
       {props.post && <NewPost post={props.post} onSubmit={props.close} />}
     </div>
   </Modal>
