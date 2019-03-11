@@ -61,7 +61,7 @@ const PostControls = props => {
   </React.Fragment>
 }
 
-const EditPostModal = props => (
+const PostModal = props => (
   <Modal
     visible={props.open}
     width="600"
@@ -74,17 +74,24 @@ const EditPostModal = props => (
   </Modal>
 )
 
-const PostCommentModel = props => (
-  <Modal
-    visible={props.open}
-    width="600"
-    effect="fadeInUp"
-    onClickAway={props.close}>
-    <div className="m-5">
-      <h3 className="border-b border-grey-light">Editing post</h3>
-      {props.post && <NewPost post={{...props.post, post_id: props.postId}} onSubmit={props.close} />}
-    </div>
-  </Modal>
+const LinkToParent = props => (
+  <a className="text-xs mb-2"
+    onClick={() => {
+      window.scrollTo(
+        0, // X axis
+        document.getElementById(`post-${props.parentId}`).offsetTop - 300 // Y axis
+      )
+      // Let's delay the animation
+
+      const classes = ['rounded-lg', 'shadow-lg', 'animated', 'pulse']
+      setTimeout(() => {
+        document.getElementById(`post-${props.parentId}`).classList.add(...classes)
+        setTimeout(() => {
+          document.getElementById(`post-${props.parentId}`).classList.remove(...classes)
+        }, 800)
+      }, 500)
+
+    }}>See parent post</a>
 )
 
 class Post extends React.Component {
@@ -116,6 +123,7 @@ class Post extends React.Component {
   handleCommentOn(id) {
     this.setState({
       comment: {
+        ...this.state.comment,
         open: true,
         post: {
           content: '',
@@ -187,31 +195,16 @@ class Post extends React.Component {
     })
   }
 
+  componentWillUnmount(){
+    this.mounted = false;
+  }
+
   render () {
     const props = this.props
     return (
       <React.Fragment>
         <div id={`post-${props.post.id}`} className="bg-white p-5 border-t border-solid border-primary-lightest flex flex-col duration-3">
-          {props.post.post_id && 
-            <a
-              className="text-xs mb-2"
-              onClick={() => {
-                window.scrollTo(
-                  0, // X axis
-                  document.getElementById(`post-${props.post.post_id}`).offsetTop - 300 // Y axis
-                )
-                // Let's delay the animation
-
-                const classes = ['rounded-lg', 'shadow-lg', 'animated', 'pulse']
-                setTimeout(() => {
-                  document.getElementById(`post-${props.post.post_id}`).classList.add(...classes)
-                  setTimeout(() => {
-                    document.getElementById(`post-${props.post.post_id}`).classList.remove(...classes)
-                  }, 800)
-                }, 500)
-
-              }}>See parent post</a>
-          }
+          {props.post.post_id && <LinkToParent parentId={props.post.post_id} />}
           {props.itsMe && <Menu 
                             post={props.post}
                             open={this.state.menuOpen}
@@ -229,11 +222,11 @@ class Post extends React.Component {
             currentUser={props.currentUser}
             post={props.post} />
         </div>
-        <EditPostModal
+        <PostModal
           close={() => this.setState({ edit: { open: false, post: null } })}
           open={this.state.edit.open}
           post={this.state.edit.post} />
-        <EditPostModal
+        <PostModal
           close={() => this.setState({ comment: { open: false, post: null } })}
           open={this.state.comment.open}
           post={this.state.comment.post} />

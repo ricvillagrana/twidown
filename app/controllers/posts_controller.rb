@@ -41,11 +41,11 @@ class PostsController < ApplicationController
 
   def destroy
     deleted_post = post
-    if post.destroy
+    if post.comments.empty? && post.destroy
       Broadcast::Post.destroyed(deleted_post)
       render json: { status: 200 }
     else
-      render json: { status: 500, errors: post.errors.full_messages }
+      render json: { status: 500, errors: ['The post has comments, you cannot delete it!'] }
     end
   end
 
