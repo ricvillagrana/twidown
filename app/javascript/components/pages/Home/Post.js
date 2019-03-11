@@ -104,7 +104,7 @@ class Post extends React.Component {
       .then(({data}) => {
         if (data.status !== 200) {
           this.showErrors(data.errors)
-        } else console.log(data)
+        }
       }).catch(err => this.showErrors([err]))
   }
 
@@ -113,7 +113,7 @@ class Post extends React.Component {
       .then(({data}) => {
         if (data.status !== 200) {
           this.showErrors(data.errors)
-        } else console.log(data)
+        }
       }).catch(err => this.showErrors([err]))
   }
 
@@ -161,7 +161,19 @@ class Post extends React.Component {
     const props = this.props
     return (
       <React.Fragment>
-        <div className="bg-white p-5 border-t border-solid border-primary-lightest flex flex-col">
+        <div id={`post-${props.post.id}`} className="bg-white p-5 border-t border-solid border-primary-lightest flex flex-col">
+          {props.post.post_id && 
+            <a
+              className="text-xs text-blue mb-2"
+              onClick={() => {
+                window.scrollTo(
+                  0, // X axis
+                  document.getElementById(`post-${props.post.post_d}`).offsetTop - 300 // Y axis
+                )
+                document.getElementById(`post-${props.post.post_d}`).classList.add('animated', 'heartBeat')
+
+              }}>See parent post</a>
+          }
           {props.itsMe && <Menu 
                             post={props.post}
                             open={this.state.menuOpen}
