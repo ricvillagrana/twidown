@@ -1,0 +1,6 @@
+daily_admin_email:
+  cron: "* */1 * * *"
+  class: "DailyEmailToAdminJob"
+  queue: daily_admin_email
+  args: 
+  description: "This job send a daily email to admib with app stats"
