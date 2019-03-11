@@ -49,7 +49,7 @@ const PostControls = props => {
 
   return <React.Fragment>
     <div className="flex flex-row justify-around mt-3 text-sm">
-      <a className="text-grey-darker"><i className="fa fa-comment"></i>Comment</a>
+      <a className="text-grey-darker" onClick={() => props.handleCommentOn(props.post.id)}><i className="fa fa-comment"></i>Comment</a>
       <a className="text-grey-darker"><i className="fa fa-share"></i>Repost</a>
       <a onClick={() => toggleLike()} className={`tooltip text-${liked ? 'red' : 'grey-darker'}`}>
         {props.post.likes_count}
@@ -68,8 +68,21 @@ const EditPostModal = props => (
     effect="fadeInUp"
     onClickAway={props.close}>
     <div className="m-5">
-      <h3 className="border-b border-grey-light">Editing post</h3>
+      <h3 className="border-b border-grey-light">Commenting on another post</h3>
       {props.post && <NewPost post={props.post} onSubmit={props.close} />}
+    </div>
+  </Modal>
+)
+
+const PostCommentModel = props => (
+  <Modal
+    visible={props.open}
+    width="600"
+    effect="fadeInUp"
+    onClickAway={props.close}>
+    <div className="m-5">
+      <h3 className="border-b border-grey-light">Editing post</h3>
+      {props.post && <NewPost post={{...props.post, post_id: props.postId}} onSubmit={props.close} />}
     </div>
   </Modal>
 )
@@ -84,6 +97,10 @@ class Post extends React.Component {
       edit: {
         open: false,
         post: null
+      },
+      comment: {
+        open: false,
+        post: null
       }
     }
 
@@ -92,7 +109,20 @@ class Post extends React.Component {
     this.handleEditPost   = this.handleEditPost.bind(this)
 
     this.handleLike       = this.handleLike.bind(this)
-    this.handleDislike     = this.handleDislike.bind(this)
+    this.handleDislike    = this.handleDislike.bind(this)
+    this.handleCommentOn  = this.handleCommentOn.bind(this)
+  }
+
+  handleCommentOn(id) {
+    this.setState({
+      comment: {
+        open: true,
+        post: {
+          content: '',
+          post_id: id
+        }
+      }
+    })
   }
 
   handleToggleMenu() {
@@ -161,16 +191,24 @@ class Post extends React.Component {
     const props = this.props
     return (
       <React.Fragment>
-        <div id={`post-${props.post.id}`} className="bg-white p-5 border-t border-solid border-primary-lightest flex flex-col">
+        <div id={`post-${props.post.id}`} className="bg-white p-5 border-t border-solid border-primary-lightest flex flex-col duration-3">
           {props.post.post_id && 
             <a
-              className="text-xs text-blue mb-2"
+              className="text-xs mb-2"
               onClick={() => {
                 window.scrollTo(
                   0, // X axis
-                  document.getElementById(`post-${props.post.post_d}`).offsetTop - 300 // Y axis
+                  document.getElementById(`post-${props.post.post_id}`).offsetTop - 300 // Y axis
                 )
-                document.getElementById(`post-${props.post.post_d}`).classList.add('animated', 'heartBeat')
+                // Let's delay the animation
+
+                const classes = ['rounded-lg', 'shadow-lg', 'animated', 'pulse']
+                setTimeout(() => {
+                  document.getElementById(`post-${props.post.post_id}`).classList.add(...classes)
+                  setTimeout(() => {
+                    document.getElementById(`post-${props.post.post_id}`).classList.remove(...classes)
+                  }, 800)
+                }, 500)
 
               }}>See parent post</a>
           }
@@ -187,6 +225,7 @@ class Post extends React.Component {
           <PostControls
             handleDislike={this.handleDislike}
             handleLike={this.handleLike}
+            handleCommentOn={this.handleCommentOn}
             currentUser={props.currentUser}
             post={props.post} />
         </div>
@@ -194,6 +233,10 @@ class Post extends React.Component {
           close={() => this.setState({ edit: { open: false, post: null } })}
           open={this.state.edit.open}
           post={this.state.edit.post} />
+        <EditPostModal
+          close={() => this.setState({ comment: { open: false, post: null } })}
+          open={this.state.comment.open}
+          post={this.state.comment.post} />
       </React.Fragment>
     );
   }
