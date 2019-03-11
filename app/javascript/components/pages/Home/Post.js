@@ -170,7 +170,7 @@ class Post extends React.Component {
                             handleToggleMenu={this.handleToggleMenu} /> }
           <UserInfo user={props.user} />
           <div className="ml-16 text-sm">
-            {renderHTML($markdown.render(props.post.content))}
+            {renderHTML($markdown.render($emoji.emojify(props.post.content)))}
           </div>
           <PostControls
             handleDislike={this.handleDislike}

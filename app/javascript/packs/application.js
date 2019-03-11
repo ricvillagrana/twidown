@@ -2,8 +2,8 @@ import axios from 'axios';
 import swal from 'sweetalert2';
 import autosize from 'autosize'
 import MarkdownIt from 'markdown-it'
-import emoji from 'markdown-it-emoji'
 import hljs from 'highlight.js'
+import emoji from 'node-emoji'
 
 const markdown = new MarkdownIt({
   highlight: function (str, lang) {
@@ -16,7 +16,6 @@ const markdown = new MarkdownIt({
     return ''; // use external default escaping
   }
 })
-markdown.use(emoji)
 
 // Configure axios to use CSRF-TOKEN from Rails
 const token = document.head.querySelector('meta[name="csrf-token"]');
@@ -26,6 +25,7 @@ axios.defaults.headers.common['Accept'] = 'application/json'
 
 window.$actioncableURL = `ws${window.location.protocol === 'https:' ? 's' : ''}://${window.location.host}/cable`
 
+window.$emoji = emoji
 window.$axios = axios
 window.$autosize = autosize
 window.$markdown = markdown

@@ -11,6 +11,7 @@
     "highlight.js": "^9.15.6",
     "markdown-it": "^8.4.2",
     "markdown-it-emoji": "^1.4.0",
+    "node-emoji": "^1.10.0",
     "prop-types": "^15.7.2",
     "react": "^16.8.3",
     "react-awesome-modal": "^2.0.5",

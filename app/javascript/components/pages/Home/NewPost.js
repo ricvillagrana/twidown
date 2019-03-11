@@ -7,7 +7,7 @@ const MarkdownPreview = props => (
   <React.Fragment>
     {props.open && <div className="px-5 py-3 bg-white">
       <h3 className="border-b border-grey-light mb-2">Post preview</h3>
-      {renderHTML($markdown.render(props.content))}
+      {renderHTML($markdown.render($emoji.emojify(props.content)))}
     </div>}
   </React.Fragment>
 )
