@@ -1,5 +1,5 @@
 daily_admin_email:
-  cron: "* * */5 * *"
+  cron: "* */1 * * *"
   class: "DailyEmailToAdminJob"
   queue: daily_admin_email
   args: 
