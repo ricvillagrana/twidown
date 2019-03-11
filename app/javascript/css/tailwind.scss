@@ -31,7 +31,10 @@
 }
 
 
-html, body, #container { height: 100%!important; @apply bg-primary-lightest; }
+html, body, #container { height: 100%!important; @apply bg-grey-lightest; }
+html {
+  scroll-behavior: smooth;
+}
 
 [data-react-class='sessions/SignUp'] { height: 100%; } 
 [data-react-class='sessions/SignIn'] { height: 100%; } 
