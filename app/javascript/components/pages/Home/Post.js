@@ -87,33 +87,38 @@ const PostModal = props => (
 )
 
 const Repost = props => (
-  <div id={`post-${props.post.id}`} className="bg-grey-lightest p-3 border border-solid border-grey-light rounded flex flex-col duration-3">
+  <div className="bg-grey-lightest p-3 border border-solid border-grey-light rounded flex flex-col duration-3">
     <UserInfo user={props.user} post={props.post} />
-    <div className="text-sm">
-      {renderHTML($markdown.render(props.post.content))}
-    </div>
+    <LinkToParent parentId={props.post.id}>
+      <div className="text-sm">
+        {renderHTML($markdown.render(props.post.content))}
+      </div>
+    </LinkToParent>
   </div>
 )
 
-const LinkToParent = props => (
-  <a className="text-xs mb-2"
-    onClick={() => {
-      window.scrollTo(
-        0, // X axis
-        document.getElementById(`post-${props.parentId}`).offsetTop - 300 // Y axis
-      )
-      // Let's delay the animation
+const LinkToParent = props => {
+  const scrollToPost = () => {
+    const parentPostElement = document.getElementById(`post-${props.parentId}`)
 
-      const classes = ['rounded-lg', 'shadow-lg', 'animated', 'pulse']
-      setTimeout(() => {
-        document.getElementById(`post-${props.parentId}`).classList.add(...classes)
-        setTimeout(() => {
-          document.getElementById(`post-${props.parentId}`).classList.remove(...classes)
-        }, 800)
-      }, 500)
+    if (!parentPostElement) {
+      $toast.fire('The post isn\'t loaded')
+      return
+    }
 
-    }}>See parent post</a>
-)
+    window.scrollTo(0, parentPostElement.offsetTop - 300)
+
+    // Let's delay the animation
+    const classes = ['rounded-lg', 'shadow-lg', 'animated', 'pulse']
+    setTimeout(() => {
+      parentPostElement.classList.add(...classes)
+      setTimeout(() => parentPostElement.classList.remove(...classes), 800)
+    }, 500)
+  }
+
+  return <a className="text-xs mb-2"
+    onClick={scrollToPost}>{props.children}</a>
+}
 
 class Post extends React.Component {
 
@@ -246,7 +251,7 @@ class Post extends React.Component {
     return (
       <React.Fragment>
         <div id={`post-${props.post.id}`} className="bg-white p-5 border-t border-solid border-primary-lightest flex flex-col duration-3">
-          {props.post.post_id && <LinkToParent parentId={props.post.post_id} />}
+          {props.post.post_id && <LinkToParent parentId={props.post.post_id}>See parent</LinkToParent>}
           {props.itsMe && <Menu 
                             post={props.post}
                             open={this.state.menuOpen}
