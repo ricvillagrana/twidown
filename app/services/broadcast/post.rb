@@ -29,9 +29,16 @@ module Broadcast
                 :user,
                 users: {
                   only: [:name, :username]
+                },
+                original_post: {
+                  include: [
+                    user: {
+                      only: [:name, :username]
+                    }
+                  ]
                 }
               ],
-              methods: [:likes_count, :like_ids]
+              methods: [:likes_count, :like_ids, :repost_count, :repost_ids]
             ),
             action: action
           }

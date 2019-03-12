@@ -31,8 +31,11 @@ const UserInfo = props => (
       <div className="flex mb-2 -mb-6">
         <img src={ props.user.profile_image || profileImage } className="h-12 w-12 rounded-full" />
     	<div className="flex flex-row ml-4">
-          <a className="font-bold text-black" href={`/users/${props.user.username}`}>{props.user.name}</a>
-          <a className="text-grey ml-1" href={`/users/${props.user.username}`}>@{props.user.username}</a>
+          <div>
+            <a className="font-bold text-black" href={`/users/${props.user.username}`}>{props.user.name}</a>
+            <a className="text-primary-light ml-1 text-sm" href={`/users/${props.user.username}`}>@{props.user.username}</a>
+            <span className="ml-2 text-grey text-xs" title={$moment(props.post.created_at).calendar()}>{$moment(props.post.created_at).fromNow()}</span>
+          </div>
       	</div>
       </div> 
     </div>}
@@ -50,7 +53,11 @@ const PostControls = props => {
   return <React.Fragment>
     <div className="flex flex-row justify-around mt-3 text-sm">
       <a className="text-grey-darker" onClick={() => props.handleCommentOn(props.post.id)}><i className="fa fa-comment"></i>Comment</a>
-      <a className="text-grey-darker"><i className="fa fa-share"></i>Repost</a>
+      <a className="text-grey-darker" onClick={() => props.handleRepost(props.post.id)}>
+        {props.post.repost_count}
+        <i className="fa fa-share ml-2"></i>
+        Repost
+      </a>
       <a onClick={() => toggleLike()} className={`tooltip text-${liked ? 'red' : 'grey-darker'}`}>
         {props.post.likes_count}
         <i className="fa fa-heart ml-2"></i>
@@ -68,31 +75,50 @@ const PostModal = props => (
     effect="fadeInUp"
     onClickAway={props.close}>
     <div className="m-5">
-      <h3 className="border-b border-grey-light">{props.post && props.post.id ? 'Editing post' : 'Commenting on another post'}</h3>
+      <h3 className="border-b border-grey-light">{props.title}</h3>
       {props.post && <NewPost post={props.post} onSubmit={props.close} />}
+      {props.info && (
+        <div>
+          {renderHTML($markdown.render(props.info.post.content))}
+        </div>
+      )}
     </div>
   </Modal>
 )
 
-const LinkToParent = props => (
-  <a className="text-xs mb-2"
-    onClick={() => {
-      window.scrollTo(
-        0, // X axis
-        document.getElementById(`post-${props.parentId}`).offsetTop - 300 // Y axis
-      )
-      // Let's delay the animation
-
-      const classes = ['rounded-lg', 'shadow-lg', 'animated', 'pulse']
-      setTimeout(() => {
-        document.getElementById(`post-${props.parentId}`).classList.add(...classes)
-        setTimeout(() => {
-          document.getElementById(`post-${props.parentId}`).classList.remove(...classes)
-        }, 800)
-      }, 500)
-
-    }}>See parent post</a>
+const Repost = props => (
+  <div className="bg-grey-lightest p-3 border border-solid border-grey-light rounded flex flex-col duration-3">
+    <UserInfo user={props.user} post={props.post} />
+    <LinkToParent parentId={props.post.id}>
+      <div className="text-sm">
+        {renderHTML($markdown.render(props.post.content))}
+      </div>
+    </LinkToParent>
+  </div>
 )
+
+const LinkToParent = props => {
+  const scrollToPost = () => {
+    const parentPostElement = document.getElementById(`post-${props.parentId}`)
+
+    if (!parentPostElement) {
+      $toast.fire('The post isn\'t loaded')
+      return
+    }
+
+    window.scrollTo(0, parentPostElement.offsetTop - 300)
+
+    // Let's delay the animation
+    const classes = ['rounded-lg', 'shadow-lg', 'animated', 'pulse']
+    setTimeout(() => {
+      parentPostElement.classList.add(...classes)
+      setTimeout(() => parentPostElement.classList.remove(...classes), 800)
+    }, 500)
+  }
+
+  return <a className="text-xs mb-2"
+    onClick={scrollToPost}>{props.children}</a>
+}
 
 class Post extends React.Component {
 
@@ -103,11 +129,18 @@ class Post extends React.Component {
       menuOpen: false,
       edit: {
         open: false,
-        post: null
+        post: null,
+        content: ''
       },
       comment: {
         open: false,
-        post: null
+        post_id: 0,
+        content: ''
+      },
+      repost: {
+        open: false,
+        repost_id: 0,
+        content: ''
       }
     }
 
@@ -118,6 +151,20 @@ class Post extends React.Component {
     this.handleLike       = this.handleLike.bind(this)
     this.handleDislike    = this.handleDislike.bind(this)
     this.handleCommentOn  = this.handleCommentOn.bind(this)
+    this.handleRepost     = this.handleRepost.bind(this)
+  }
+
+  handleRepost(id) {
+    this.setState({
+      repost: {
+        ...this.state.comment,
+        open: true,
+        post: {
+          content: '',
+          repost_id: id
+        }
+      }
+    })
   }
 
   handleCommentOn(id) {
@@ -204,32 +251,42 @@ class Post extends React.Component {
     return (
       <React.Fragment>
         <div id={`post-${props.post.id}`} className="bg-white p-5 border-t border-solid border-primary-lightest flex flex-col duration-3">
-          {props.post.post_id && <LinkToParent parentId={props.post.post_id} />}
+          {props.post.post_id && <LinkToParent parentId={props.post.post_id}>See parent</LinkToParent>}
           {props.itsMe && <Menu 
                             post={props.post}
                             open={this.state.menuOpen}
                             handleDeletePost={this.handleDeletePost}
                             handleEditPost={this.handleEditPost}
                             handleToggleMenu={this.handleToggleMenu} /> }
-          <UserInfo user={props.user} />
+          <UserInfo user={props.user} post={props.post} />
           <div className="ml-16 text-sm">
             {renderHTML($markdown.render(props.post.content))}
+            {props.post.repost_id && <Repost post={props.post.original_post} />}
           </div>
           <PostControls
             handleDislike={this.handleDislike}
             handleLike={this.handleLike}
             handleCommentOn={this.handleCommentOn}
+            handleRepost={this.handleRepost}
             currentUser={props.currentUser}
             post={props.post} />
         </div>
         <PostModal
+          title="Editing post"
           close={() => this.setState({ edit: { open: false, post: null } })}
           open={this.state.edit.open}
           post={this.state.edit.post} />
         <PostModal
+          title={`Commenting on ${props.post.user.name}'s post`}
           close={() => this.setState({ comment: { open: false, post: null } })}
           open={this.state.comment.open}
           post={this.state.comment.post} />
+        <PostModal
+          title={`Reposting ${props.post.user.name}'s post`}
+          info={{ post: props.post }}
+          close={() => this.setState({ repost: { open: false, post: null } })}
+          open={this.state.repost.open}
+          post={this.state.repost.post} />
       </React.Fragment>
     );
   }
