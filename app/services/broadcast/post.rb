@@ -21,7 +21,7 @@ module Broadcast
       end
 
       def broadcast_message(id, action, post)
-        PostChannel.broadcast_to(
+        params = [
           id,
           message: {
             post: post.to_json(
@@ -35,8 +35,10 @@ module Broadcast
             ),
             action: action
           }
-        )
+        ]
+        PostChannel.broadcast_to(*params)
+        ProfilePostChannel.broadcast_to(*params)
       end
-      end
+    end
   end
 end

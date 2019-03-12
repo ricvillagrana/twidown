@@ -204,7 +204,7 @@ class Show extends React.Component {
               posts={this.state.posts}
               menu={this.state.menu} />
 
-              {this.state.user && this.state.user.posts.map(post => (
+              {this.state.user && this.state.me && this.state.user.posts.map(post => (
                 <Post
                   key={post.id}
                   currentUser={this.state.me}
@@ -214,7 +214,7 @@ class Show extends React.Component {
               ))}
             
             {this.state.user && <ActionCable
-              channel={'PostChannel'}
+              channel={'ProfilePostChannel'}
               room={`${this.state.user.id}`}
               onConnected={this.handlePostConnected}
               onReceived={this.handlePostReceived}></ActionCable>}
