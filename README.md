@@ -1,24 +1,23 @@
-# README
+# Twidown
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Installation
+Run the following commands:
+```
+git clone https://github.com/ricvillagrana/twidown.git
+cd twidown
+bundle install
+yarn
+foreman start
+```
 
-Things you may want to cover:
+Go to http://localhost:5000/
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+## Features
+- Registration
+- Login
+- Posting
+- Follow people
+- Like posts
+- Comment on posts
+- Receive an email for each new follower
+- The admin receives a daily email with stats
