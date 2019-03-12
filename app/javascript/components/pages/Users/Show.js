@@ -128,6 +128,7 @@ class Show extends React.Component {
   handlePostReceived({message}) {
     const action = message.action
     const post = JSON.parse(message.post)
+    console.log(this.state.user.id, message)
 
     if (action == 'created')    this.handleAppendPost(post)
     if (action == 'destroyed')  this.handleRemovePost(post.id)
@@ -194,32 +195,30 @@ class Show extends React.Component {
     return (
       <React.Fragment>
         <Layout user={this.state.user}>
-          <ActionCableProvider url={$actioncableURL}>
-            <ProfileView
-              itsMe={itsMe}
-              handleFollow={this.handleFollow}
-              handleUnfollow={this.handleUnfollow}
-              user={this.state.user}
-              me={this.state.me}
-              posts={this.state.posts}
-              menu={this.state.menu} />
+          <ProfileView
+            itsMe={itsMe}
+            handleFollow={this.handleFollow}
+            handleUnfollow={this.handleUnfollow}
+            user={this.state.user}
+            me={this.state.me}
+            posts={this.state.posts}
+            menu={this.state.menu} />
 
-              {this.state.user && this.state.me && this.state.user.posts.map(post => (
-                <Post
-                  key={post.id}
-                  currentUser={this.state.me}
-                  itsMe={post.user.id === this.state.me.id}
-                  user={post.user}
-                  post={post} />
-              ))}
-            
-            {this.state.user && <ActionCable
-              channel={'ProfilePostChannel'}
-              room={`${this.state.user.id}`}
-              onConnected={this.handlePostConnected}
-              onReceived={this.handlePostReceived}></ActionCable>}
-          </ActionCableProvider>
-        </Layout>
+            {this.state.user && this.state.me && this.state.user.posts.map(post => (
+              <Post
+                key={post.id}
+                currentUser={this.state.me}
+                itsMe={post.user.id === this.state.me.id}
+                user={post.user}
+                post={post} />
+            ))}
+          
+          {this.state.user && <ActionCable
+            channel={'ProfilePostChannel'}
+            room={`${this.state.user.id}`}
+            onConnected={this.handlePostConnected}
+            onReceived={this.handlePostReceived}></ActionCable>}
+      </Layout>
      </React.Fragment>
     )
   }

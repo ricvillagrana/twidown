@@ -1,6 +1,6 @@
 class ProfilePostChannel < ApplicationCable::Channel
   def subscribed
-    stream_from "post:#{params[:room]}"
+    stream_from "profile_post:#{params[:room]}"
   end
 
   def unsubscribed

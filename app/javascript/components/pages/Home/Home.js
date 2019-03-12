@@ -132,17 +132,15 @@ class Home extends React.Component {
     return (
       <React.Fragment>
         <Layout>
-          <ActionCableProvider url={$actioncableURL}>
-            <HomeView
-              user={this.state.user}
-              posts={this.state.posts}
-              menu={this.state.menu} />
-            {this.state.user && <ActionCable
-              channel={'PostChannel'}
-              room={`${this.state.user.id}`}
-              onConnected={this.handlePostConnected}
-              onReceived={this.handlePostReceived}></ActionCable>}
-          </ActionCableProvider>
+          <HomeView
+            user={this.state.user}
+            posts={this.state.posts}
+            menu={this.state.menu} />
+          {this.state.user && <ActionCable
+            channel={'PostChannel'}
+            room={`${this.state.user.id}`}
+            onConnected={this.handlePostConnected}
+            onReceived={this.handlePostReceived}></ActionCable>}
         </Layout>
      </React.Fragment>
     )

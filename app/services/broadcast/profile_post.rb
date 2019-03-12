@@ -1,5 +1,5 @@
 module Broadcast
-  module Post
+  module ProfilePost
     class << self
       def created(post)
         broadcast(post, :created)
@@ -14,16 +14,11 @@ module Broadcast
       end
 
       def broadcast(post, action)
-        broadcast_message(post.user_id, action, post)
-        Broadcast::ProfilePost.send(action, post)
-
-        post.user.followers.each do |follower|
-          broadcast_message(follower.id, action, post)
-        end
+        broadcast_message(post.user.id, action, post)
       end
 
       def broadcast_message(id, action, post)
-        PostChannel.broadcast_to(
+        ProfilePostChannel.broadcast_to(
           id,
           message: {
             post: post.to_json(

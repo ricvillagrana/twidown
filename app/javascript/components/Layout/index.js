@@ -61,22 +61,24 @@ class Home extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <div className="flex flex-col mb-4">
-          <TopBar
-            user={this.state.user}
-            menuList={this.state.menu} />  
-          <div className="flex flex-row justify-arround w-full mt-4 mb-8">
-            <div className="flex flex-col w-1/6"></div>
-            <div className="flex flex-col w-1/6 px-2">
-              <InfoCard user={this.props.user ? this.props.user : this.state.user} />
+        <ActionCableProvider url={$actioncableURL}>
+          <div className="flex flex-col mb-4">
+            <TopBar
+              user={this.state.user}
+              menuList={this.state.menu} />  
+            <div className="flex flex-row justify-arround w-full mt-4 mb-8">
+              <div className="flex flex-col w-1/6"></div>
+              <div className="flex flex-col w-1/6 px-2">
+                <InfoCard user={this.props.user ? this.props.user : this.state.user} />
+              </div>
+              <div className="flex flex-col w-1/3 px-2">
+                {this.props.children} 
+              </div>
+              <div className="flex flex-col w-1/6 px-2"></div>
+              <div className="flex flex-col w-1/6"></div>
             </div>
-            <div className="flex flex-col w-1/3 px-2">
-              {this.props.children} 
-            </div>
-            <div className="flex flex-col w-1/6 px-2"></div>
-            <div className="flex flex-col w-1/6"></div>
           </div>
-        </div>
+        </ActionCableProvider>
       </React.Fragment>
     )
   }
