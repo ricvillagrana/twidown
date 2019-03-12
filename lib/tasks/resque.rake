@@ -5,9 +5,6 @@ require 'resque/scheduler/tasks'
 namespace :resque do
   task :setup do
     require 'resque'
-
-    # you probably already have this somewhere
-    Resque.redis = 'localhost:6379'
   end
 
   task :setup_schedule => :setup do
