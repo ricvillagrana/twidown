@@ -16,6 +16,7 @@ json.user do
       json.post_id post.post_id
       json.repost_id post.repost_id
       json.likes_count post.likes_count
+      json.comments_count post.comments_count
       json.like_ids post.like_ids
       json.user post.user
       json.users do

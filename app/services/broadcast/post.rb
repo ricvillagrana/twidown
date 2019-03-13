@@ -14,9 +14,11 @@ module Broadcast
       end
 
       def broadcast(post, action)
-        broadcast_message(post.user_id, action, post)
+        # Broadcast to profiles
         Broadcast::ProfilePost.send(action, post)
 
+        # Broadcast to main feed
+        broadcast_message(post.user_id, action, post)
         post.user.followers.each do |follower|
           broadcast_message(follower.id, action, post)
         end
@@ -33,7 +35,7 @@ module Broadcast
                   only: [:name, :username]
                 }
               ],
-              methods: [:likes_count, :like_ids]
+              methods: [:likes_count, :like_ids, :comments_count]
             ),
             action: action
           }

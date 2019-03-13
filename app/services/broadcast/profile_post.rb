@@ -14,7 +14,7 @@ module Broadcast
       end
 
       def broadcast(post, action)
-        broadcast_message(post.user.id, action, post)
+        broadcast_message(post.user_id, action, post)
       end
 
       def broadcast_message(id, action, post)
@@ -28,7 +28,7 @@ module Broadcast
                   only: [:name, :username]
                 }
               ],
-              methods: [:likes_count, :like_ids]
+              methods: [:likes_count, :like_ids, :comments_count]
             ),
             action: action
           }

@@ -12,6 +12,10 @@ class Post < ApplicationRecord
 
   validates :content, length: { minimum: 1 }
 
+  def comments_count
+    comments.size
+  end
+
   def likes_count
     likes.size
   end

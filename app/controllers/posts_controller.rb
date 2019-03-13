@@ -14,7 +14,7 @@ class PostsController < ApplicationController
             only: [:name, :username]
           }
         ],
-        methods: [:likes_count, :like_ids]
+        methods: [:likes_count, :like_ids, :comments_count]
       }
     end
   end
@@ -24,6 +24,8 @@ class PostsController < ApplicationController
 
     if @post.save
       Broadcast::Post.created(@post)
+      Broadcast::Post.updated(@post.post)
+      #Broadcast::Post.updated(@post.original)
       render json: { status: 200, post: @post }
     else
       render json: { status: 500, errors: @post.errors.full_messages }
@@ -43,6 +45,8 @@ class PostsController < ApplicationController
     deleted_post = post
     if PostService::destroy(post)
       Broadcast::Post.destroyed(deleted_post)
+      Broadcast::Post.updated(deleted_post.post)
+      #Broadcast::Post.updated(deleted_post.original)
       render json: { status: 200 }
     else
       render json: { status: 500, errors: ['The post has comments, you cannot delete it!'] }
