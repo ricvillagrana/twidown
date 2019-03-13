@@ -22,9 +22,7 @@ class UsersController < ApplicationController
   def follow
     user = User.find(params[:id])
     if current_user.follow(user)
-      #FollowerEmailJob.perform(user.id, current_user.id)
       Resque.enqueue(FollowerEmailJob, user.id, current_user.id)
-      #NewFollowerMailer.new_follower(user, current_user).deliver
       render json: { followed: user, follower: current_user, status: 200} 
     else
       render json: { status: 500 }
