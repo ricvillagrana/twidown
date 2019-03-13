@@ -8,13 +8,20 @@ class PostsController < ApplicationController
       format.html
       format.json {
         render json: { posts: @posts }, 
-        include: [
-          :user,
-          users: {
-            only: [:name, :username]
-          }
-        ],
-        methods: [:likes_count, :like_ids, :comments_count]
+          include: [
+            :user,
+            users: {
+              only: [:name, :username]
+            },
+            original_post: {
+              include: [
+                user: {
+                  only: [:name, :username]
+                }
+              ]
+            }
+          ],
+          methods: [:likes_count, :like_ids, :repost_count, :repost_ids, :comments_count]
       }
     end
   end
@@ -24,8 +31,8 @@ class PostsController < ApplicationController
 
     if @post.save
       Broadcast::Post.created(@post)
-      Broadcast::Post.updated(@post.post)
-      #Broadcast::Post.updated(@post.original)
+      Broadcast::Post.updated(@post.post) if @post.post_id
+      Broadcast::Post.updated(@post.original_post) if @post.repost_id
       render json: { status: 200, post: @post }
     else
       render json: { status: 500, errors: @post.errors.full_messages }
@@ -45,8 +52,8 @@ class PostsController < ApplicationController
     deleted_post = post
     if PostService::destroy(post)
       Broadcast::Post.destroyed(deleted_post)
-      Broadcast::Post.updated(deleted_post.post)
-      #Broadcast::Post.updated(deleted_post.original)
+      Broadcast::Post.updated(deleted_post.post) if deleted_post.post_id
+      Broadcast::Post.updated(deleted_post.original_post) if deleted_post.repost_id
       render json: { status: 200 }
     else
       render json: { status: 500, errors: ['The post has comments, you cannot delete it!'] }
@@ -87,7 +94,7 @@ class PostsController < ApplicationController
   def post_params
     params
       .require(:post)
-      .permit(:content, :post_id)
+      .permit(:content, :post_id, :repost_id)
   end
 
 end

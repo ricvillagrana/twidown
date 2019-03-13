@@ -4,6 +4,7 @@ import autosize from 'autosize'
 import MarkdownIt from 'markdown-it'
 import emoji from 'markdown-it-emoji'
 import hljs from 'highlight.js'
+import moment from 'moment'
 import 'animate.css'
 
 const markdown = new MarkdownIt({
@@ -22,11 +23,18 @@ markdown.use(emoji)
 // Configure axios to use CSRF-TOKEN from Rails
 const token = document.head.querySelector('meta[name="csrf-token"]');
 axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
-
 axios.defaults.headers.common['Accept'] = 'application/json'
 
-window.$actioncableURL = `ws${window.location.protocol === 'https:' ? 's' : ''}://${window.location.host}/cable`
+moment.locale('en')
 
+window.$actioncableURL = `ws${window.location.protocol === 'https:' ? 's' : ''}://${window.location.host}/cable`
+window.$moment = moment
+window.$time = function (time) {
+  return moment(time).utcOffset(-6).format('h:mm:ss A')
+}
+window.$date = function (date) {
+  return moment(date).utcOffset(-6).format('DD/MM/YYYY')
+}
 window.$axios = axios
 window.$autosize = autosize
 window.$markdown = markdown
