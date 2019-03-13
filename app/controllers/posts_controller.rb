@@ -41,7 +41,7 @@ class PostsController < ApplicationController
 
   def destroy
     deleted_post = post
-    if post.comments.empty? && post.destroy
+    if PostService::destroy(post)
       Broadcast::Post.destroyed(deleted_post)
       render json: { status: 200 }
     else
