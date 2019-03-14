@@ -50,7 +50,7 @@ class PostsController < ApplicationController
 
   def destroy
     deleted_post = post
-    if PostService::destroy(post)
+    if PostService::Destroy.process(post)
       Broadcast::Post.destroyed(deleted_post)
       Broadcast::Post.updated(deleted_post.post) if deleted_post.post_id
       Broadcast::Post.updated(deleted_post.original_post) if deleted_post.repost_id
