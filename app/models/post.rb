@@ -1,10 +1,9 @@
 class Post < ApplicationRecord
-  before_destroy :destroy_likes
   belongs_to :user
   belongs_to :post, optional: true
   belongs_to :original_post, class_name: 'Post', optional: true, foreign_key: 'repost_id'
 
-  has_many :likes
+  has_many :likes, dependent: :delete_all
   has_many :users, through: :likes, class_name: 'User'
   has_many :comments, class_name: 'Post', foreign_key: 'post_id'
   has_many :reposts, class_name: 'Post', foreign_key: 'repost_id'
@@ -13,8 +12,8 @@ class Post < ApplicationRecord
 
   validates :content, length: { minimum: 1 }
 
-  def destroy_likes
-    likes.destroy_all
+  def comments_count
+    comments.size
   end
 
   def repost_count

@@ -52,7 +52,11 @@ const PostControls = props => {
 
   return <React.Fragment>
     <div className="flex flex-row justify-around mt-3 text-sm">
-      <a className="text-grey-darker" onClick={() => props.handleCommentOn(props.post.id)}><i className="fa fa-comment"></i>Comment</a>
+      <a className="text-grey-darker" onClick={() => props.handleCommentOn(props.post.id)}>
+        {props.post.comments_count}
+        <i className="fa fa-comment ml-2"></i>
+        Comment
+      </a>
       <a className="text-grey-darker" onClick={() => props.handleRepost(props.post.id)}>
         {props.post.repost_count}
         <i className="fa fa-share ml-2"></i>

@@ -21,7 +21,7 @@ class PostsController < ApplicationController
               ]
             }
           ],
-          methods: [:likes_count, :like_ids, :repost_count, :repost_ids]
+          methods: [:likes_count, :like_ids, :repost_count, :repost_ids, :comments_count]
       }
     end
   end
@@ -31,6 +31,7 @@ class PostsController < ApplicationController
 
     if @post.save
       Broadcast::Post.created(@post)
+      Broadcast::Post.updated(@post.post) if @post.post_id
       Broadcast::Post.updated(@post.original_post) if @post.repost_id
       render json: { status: 200, post: @post }
     else
@@ -49,8 +50,9 @@ class PostsController < ApplicationController
 
   def destroy
     deleted_post = post
-    if post.comments.empty? && post.destroy
+    if PostService::Destroy.process(post)
       Broadcast::Post.destroyed(deleted_post)
+      Broadcast::Post.updated(deleted_post.post) if deleted_post.post_id
       Broadcast::Post.updated(deleted_post.original_post) if deleted_post.repost_id
       render json: { status: 200 }
     else

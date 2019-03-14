@@ -4,11 +4,12 @@ import { ActionCableProvider, ActionCable } from 'actioncable-client-react'
 
 import Layout from './../../Layout/'
 import FollowButton from '../FollowButton'
+import Post from '../Home/Post'
 
 import profileImage from '../../../../assets/images/profile.png'
 import coverImage from '../../../../assets/images/cover.png'
 
-const HomeView= props => (
+const ProfileView = props => (
   <div className="bg-white rounded">
     {props.user && <div className="p-3 border-b border-primary-lightest flex flex-row justify-between">
       <div>
@@ -19,28 +20,8 @@ const HomeView= props => (
       {!props.itsMe && <FollowButton user={props.user} />}
 
     </div>}
-    <div className="p-3">
-      Publications
-    </div>
   </div>
 )
-
-//const FollowButton = props => (
-  //<React.Fragment>
-    //{props.me && props.me.following_ids.some(id => id === props.user.id) ? 
-    //<button 
-      //onClick={() => props.handleUnfollow()}
-      //className="btn red absolute self-end">
-      //Unfollow
-    //</button>
-    //: 
-    //<button 
-      //onClick={() => props.handleFollow()}
-      //className="btn primary absolute self-end">
-      //Follow
-    //</button>}
-  //</React.Fragment>
-//)
 
 class Show extends React.Component {
 
@@ -55,17 +36,19 @@ class Show extends React.Component {
 
     this.fetchUser            = this.fetchUser.bind(this)
     this.fetchMe              = this.fetchMe.bind(this)
-    this.fetchPosts           = this.fetchPosts.bind(this)
     this.handlePostReceived   = this.handlePostReceived.bind(this)
     this.handlePostConnected  = this.handlePostConnected.bind(this)
     this.handleFollow         = this.handleFollow.bind(this)
     this.handleUnfollow       = this.handleUnfollow.bind(this)
+
+    this.handleRemovePost = this.handleRemovePost.bind(this)
+    this.handleAppendPost = this.handleAppendPost.bind(this)
+    this.handleUpdatePost = this.handleUpdatePost.bind(this)
   }
 
   componentDidMount() {
     this.fetchUser()
     this.fetchMe()
-    this.fetchPosts()
   }
 
   handleFollow() {
@@ -106,9 +89,50 @@ class Show extends React.Component {
       .catch(err => this.showErrors([err]))
   }
 
-  handlePostReceived(post) {
-    this.fetchPosts()
-    console.log('received')
+  handleAppendPost(post) {
+    let posts = this.state.user.posts
+    posts = [post, ...posts]
+    this.setState({
+      user: {
+        ...this.state.user,
+        posts
+      }
+    })
+  }
+
+  handleUpdatePost(updated) {
+    let posts = this.state.user.posts
+    posts = posts.map(post => {
+      if (post.id === updated.id) return updated
+      return post
+    })
+    this.setState({
+      user: {
+        ...this.state.user,
+        posts
+      }
+    })
+  }
+
+  handleRemovePost(id) {
+    let posts = this.state.user.posts
+    posts = posts.filter(post => post.id !== id)
+    this.setState({
+      user: {
+        ...this.state.user,
+        posts
+      }
+    })
+  }
+
+  handlePostReceived({message}) {
+    const action = message.action
+    const post = JSON.parse(message.post)
+    console.log(this.state.user.id, message)
+
+    if (action == 'created')    this.handleAppendPost(post)
+    if (action == 'destroyed')  this.handleRemovePost(post.id)
+    if (action == 'updated')    this.handleUpdatePost(post)
   } 
 
   handlePostConnected() {
@@ -155,18 +179,6 @@ class Show extends React.Component {
       })
   }
 
-  fetchPosts() {
-    $axios.get('/posts.json')
-      .then(({data}) => {
-        this.setState({
-          posts: data.posts
-        })
-      })
-      .catch(err => {
-        this.showErrors([err])
-      })
-  }
-
   showErrors(errors) {
     console.log(errors)
     const errorsHTML = errors.map(err => `<li>${err}</li>`).join('')
@@ -179,25 +191,34 @@ class Show extends React.Component {
 
   render() {
     const itsMe = this.state.user && this.state.me && this.state.user.id === this.state.me.id
+
     return (
       <React.Fragment>
         <Layout user={this.state.user}>
-          <ActionCableProvider url={$actioncableURL}>
-            <HomeView
-              itsMe={itsMe}
-              handleFollow={this.handleFollow}
-              handleUnfollow={this.handleUnfollow}
-              user={this.state.user}
-              me={this.state.me}
-              posts={this.state.posts}
-              menu={this.state.menu} />
-            {this.state.user && <ActionCable
-              channel={'PostChannel'}
-              room={`${this.state.user.id}`}
-              onConnected={this.handlePostConnected}
-              onReceived={this.handlePostReceived}></ActionCable>}
-          </ActionCableProvider>
-        </Layout>
+          <ProfileView
+            itsMe={itsMe}
+            handleFollow={this.handleFollow}
+            handleUnfollow={this.handleUnfollow}
+            user={this.state.user}
+            me={this.state.me}
+            posts={this.state.posts}
+            menu={this.state.menu} />
+
+            {this.state.user && this.state.me && this.state.user.posts.map(post => (
+              <Post
+                key={post.id}
+                currentUser={this.state.me}
+                itsMe={post.user.id === this.state.me.id}
+                user={post.user}
+                post={post} />
+            ))}
+          
+          {this.state.user && <ActionCable
+            channel={'ProfilePostChannel'}
+            room={`${this.state.user.id}`}
+            onConnected={this.handlePostConnected}
+            onReceived={this.handlePostReceived}></ActionCable>}
+      </Layout>
      </React.Fragment>
     )
   }
