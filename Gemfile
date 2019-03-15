@@ -45,6 +45,8 @@ group :development, :test do
   gem 'factory_bot_rails'
   # Shoulda
   gem 'shoulda'
+  # Faker
+  gem 'faker'
 end
 
 group :development do

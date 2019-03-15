@@ -32,7 +32,17 @@ class User < ApplicationRecord
     self.following.append(user) unless self.following.any? { |following| following.id == user.id }
   end
 
+  def follow!(user)
+    follow(user)
+    save
+  end
+
   def unfollow(user)
     self.following.delete(user.id)
+  end
+
+  def unfollow!(user)
+    unfollow(user)
+    save
   end
 end
