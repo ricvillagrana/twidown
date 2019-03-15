@@ -10,7 +10,7 @@ FactoryBot.define do
   end
 
   factory :post do
-    name { Faker::Lorem.paragraph }
+    content { Faker::Lorem.paragraph }
   end
 
 end
