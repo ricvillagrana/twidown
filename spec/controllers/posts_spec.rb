@@ -84,9 +84,9 @@ RSpec.describe PostsController, type: :controller do
   context 'PUT posts#update' do
     it 'update a post by passing the id and the new content' do
       sign_in(@user)
-      post = @user.posts.first
-      put :update, params: { id: post.id, post: { id: post.id, content: 'new_content' } }
-      expect(Post.find(post.id).content).to eq('new_content')
+      user_post = @user.posts.first
+      put :update, params: { id: user_post.id, post: { id: user_post.id, content: 'new_content' } }
+      expect(Post.find(user_post.id).content).to eq('new_content')
     end
   end
 
@@ -96,6 +96,25 @@ RSpec.describe PostsController, type: :controller do
       posts_count = @user.posts.size
       delete :destroy, params: { id: @user.posts.first.id }
       expect(@user.posts.size).to eq(posts_count - 1)
+    end
+  end
+
+  context 'Like/Unlike posts' do
+    it 'can like posts' do
+      sign_in(@user)
+      user_post = @user.posts.first
+      likes = user_post.likes_count
+      post :like, params: { id: user_post.id }
+      expect(Post.find(user_post.id).likes_count).to eq(likes + 1)
+    end
+
+    it 'can unlike posts' do
+      sign_in(@user)
+      user_post = @user.posts.first
+      post :like, params: { id: user_post.id }
+      likes = Post.find(user_post.id).likes_count
+      delete :dislike, params: { id: user_post.id }
+      expect(Post.find(user_post.id).likes_count).to eq(likes - 1)
     end
   end
 
