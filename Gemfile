@@ -68,6 +68,8 @@ group :test do
   gem 'chromedriver-helper'
   # DatabaseCleaner
   gem 'database_cleaner'
+  # SimpleCov
+  gem 'simplecov'
 end
 
 # Webpacker and React Rails
