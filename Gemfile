@@ -41,6 +41,8 @@ group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   # RSpec
   gem 'rspec-rails'
+  # Controllers
+  gem 'rails-controller-testing'
   # Dummy data for testing
   gem 'factory_bot_rails'
   # Shoulda
